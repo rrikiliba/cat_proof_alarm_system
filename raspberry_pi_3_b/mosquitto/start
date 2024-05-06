@@ -1,0 +1,6 @@
+#!/bin/bash
+if ! docker start mosquitto 1>/dev/null 2>&1; then
+    echo "postgres container does not exist, creating it"
+    docker run -it --name mosquitto -p 1883:1883 -p 9001:9001 -v ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf -v ./mosquitto/log:/mosquitto/log -v ./mosquitto/data:/mosquitto/data -v ./mosquitto/passwords.txt:/mosquitto/passwords.txt -v ./mosquitto/certs:/mosquitto/certs eclipse-mosquitto
+fi
+echo "Mosquitto up"
