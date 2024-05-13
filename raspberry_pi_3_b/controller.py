@@ -33,10 +33,10 @@ class Controller:
         for box in result.boxes:
             confidence = round(box.conf[0].item(), 3)
             obj = result.names[box.cls[0].item()]
-            if obj == 'person' and confidence > 0.75:
-                self.mqtt.publish('alarm/sound', payload=None, qos=1)
-                return False
-            elif obj == 'cat' or obj == 'dog' and confidence > 0.75:
+            # if obj == 'person' and confidence > 0.75:
+            #     self.mqtt.publish('alarm/sound', payload=None, qos=1)
+            #     return False
+            if obj == 'cat' or obj == 'dog' and confidence > 0.75:
                 print(f'false alarm, it was a {obj}\t(I\'m {confidence*100}% sure)')
                 return True
     
