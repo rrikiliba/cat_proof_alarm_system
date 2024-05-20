@@ -1,2 +1,181 @@
 1715612629: mosquitto version 2.0.18 terminating
 1715612629: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1716221313: mosquitto version 2.0.18 starting
+1716221313: Config loaded from /mosquitto/config/mosquitto.conf.
+1716221313: Warning: File /etc/mosquitto/passwd has world readable permissions. Future versions will refuse to load this file.
+To fix this, use `chmod 0700 /etc/mosquitto/passwd`.
+1716221313: Warning: File /etc/mosquitto/passwd owner is not mosquitto. Future versions will refuse to load this file.To fix this, use `chown mosquitto /etc/mosquitto/passwd`.
+1716221313: Warning: File /etc/mosquitto/passwd group is not mosquitto. Future versions will refuse to load this file.
+1716221313: Opening ipv4 listen socket on port 1883.
+1716221313: Opening ipv6 listen socket on port 1883.
+1716221313: Opening websockets listen socket on port 9001.
+1716221313: mosquitto version 2.0.18 running
+1716221655: New connection from 172.18.0.1:47720 on port 1883.
+1716221655: New client connected from 172.18.0.1:47720 as auto-9D3D57F1-7B8B-9CCD-373B-F750C36A2F91 (p2, c1, k60).
+1716221655: Client auto-9D3D57F1-7B8B-9CCD-373B-F750C36A2F91 disconnected.
+1716221888: New connection from 172.18.0.1:46412 on port 1883.
+1716221888: New client connected from 172.18.0.1:46412 as controller (p2, c1, k60).
+1716221891: New connection from 172.18.0.1:54838 on port 1883.
+1716221891: Client controller already connected, closing old connection.
+1716221891: New client connected from 172.18.0.1:54838 as controller (p2, c1, k60).
+1716221892: New connection from 172.18.0.1:54844 on port 1883.
+1716221892: Client controller already connected, closing old connection.
+1716221892: New client connected from 172.18.0.1:54844 as controller (p2, c1, k60).
+1716221893: New connection from 172.18.0.1:54854 on port 1883.
+1716221893: Client controller already connected, closing old connection.
+1716221893: New client connected from 172.18.0.1:54854 as controller (p2, c1, k60).
+1716221894: New connection from 172.18.0.1:54860 on port 1883.
+1716221894: Client controller already connected, closing old connection.
+1716221894: New client connected from 172.18.0.1:54860 as controller (p2, c1, k60).
+1716221895: New connection from 172.18.0.1:54868 on port 1883.
+1716221895: Client controller already connected, closing old connection.
+1716221895: New client connected from 172.18.0.1:54868 as controller (p2, c1, k60).
+1716221896: New connection from 172.18.0.1:54874 on port 1883.
+1716221896: Client controller already connected, closing old connection.
+1716221896: New client connected from 172.18.0.1:54874 as controller (p2, c1, k60).
+1716221897: New connection from 172.18.0.1:54888 on port 1883.
+1716221897: Client controller already connected, closing old connection.
+1716221897: New client connected from 172.18.0.1:54888 as controller (p2, c1, k60).
+1716221898: New connection from 172.18.0.1:54898 on port 1883.
+1716221898: Client controller already connected, closing old connection.
+1716221898: New client connected from 172.18.0.1:54898 as controller (p2, c1, k60).
+1716221899: New connection from 172.18.0.1:54912 on port 1883.
+1716221899: Client controller already connected, closing old connection.
+1716221899: New client connected from 172.18.0.1:54912 as controller (p2, c1, k60).
+1716221900: New connection from 172.18.0.1:54922 on port 1883.
+1716221900: Client controller already connected, closing old connection.
+1716221900: New client connected from 172.18.0.1:54922 as controller (p2, c1, k60).
+1716221901: New connection from 172.18.0.1:40508 on port 1883.
+1716221901: Client controller already connected, closing old connection.
+1716221901: New client connected from 172.18.0.1:40508 as controller (p2, c1, k60).
+1716221902: New connection from 172.18.0.1:40514 on port 1883.
+1716221902: Client controller already connected, closing old connection.
+1716221902: New client connected from 172.18.0.1:40514 as controller (p2, c1, k60).
+1716221903: New connection from 172.18.0.1:40522 on port 1883.
+1716221903: Client controller already connected, closing old connection.
+1716221903: New client connected from 172.18.0.1:40522 as controller (p2, c1, k60).
+1716221904: New connection from 172.18.0.1:40534 on port 1883.
+1716221904: Client controller already connected, closing old connection.
+1716221904: New client connected from 172.18.0.1:40534 as controller (p2, c1, k60).
+1716221905: New connection from 172.18.0.1:40542 on port 1883.
+1716221905: Client controller already connected, closing old connection.
+1716221905: New client connected from 172.18.0.1:40542 as controller (p2, c1, k60).
+1716221906: New connection from 172.18.0.1:40544 on port 1883.
+1716221906: Client controller already connected, closing old connection.
+1716221906: New client connected from 172.18.0.1:40544 as controller (p2, c1, k60).
+1716221907: New connection from 172.18.0.1:40554 on port 1883.
+1716221907: Client controller already connected, closing old connection.
+1716221907: New client connected from 172.18.0.1:40554 as controller (p2, c1, k60).
+1716221908: New connection from 172.18.0.1:40568 on port 1883.
+1716221908: Client controller already connected, closing old connection.
+1716221908: New client connected from 172.18.0.1:40568 as controller (p2, c1, k60).
+1716221909: New connection from 172.18.0.1:40572 on port 1883.
+1716221909: Client controller already connected, closing old connection.
+1716221909: New client connected from 172.18.0.1:40572 as controller (p2, c1, k60).
+1716221910: New connection from 172.18.0.1:40582 on port 1883.
+1716221910: Client controller already connected, closing old connection.
+1716221910: New client connected from 172.18.0.1:40582 as controller (p2, c1, k60).
+1716221911: New connection from 172.18.0.1:42258 on port 1883.
+1716221911: Client controller already connected, closing old connection.
+1716221911: New client connected from 172.18.0.1:42258 as controller (p2, c1, k60).
+1716221912: New connection from 172.18.0.1:42274 on port 1883.
+1716221912: Client controller already connected, closing old connection.
+1716221912: New client connected from 172.18.0.1:42274 as controller (p2, c1, k60).
+1716221913: New connection from 172.18.0.1:42284 on port 1883.
+1716221913: Client controller already connected, closing old connection.
+1716221913: New client connected from 172.18.0.1:42284 as controller (p2, c1, k60).
+1716221914: New connection from 172.18.0.1:42288 on port 1883.
+1716221914: Client controller already connected, closing old connection.
+1716221914: New client connected from 172.18.0.1:42288 as controller (p2, c1, k60).
+1716221915: New connection from 172.18.0.1:42290 on port 1883.
+1716221915: Client controller already connected, closing old connection.
+1716221915: New client connected from 172.18.0.1:42290 as controller (p2, c1, k60).
+1716221916: New connection from 172.18.0.1:42302 on port 1883.
+1716221916: Client controller already connected, closing old connection.
+1716221916: New client connected from 172.18.0.1:42302 as controller (p2, c1, k60).
+1716221917: New connection from 172.18.0.1:42316 on port 1883.
+1716221917: Client controller already connected, closing old connection.
+1716221917: New client connected from 172.18.0.1:42316 as controller (p2, c1, k60).
+1716221918: New connection from 172.18.0.1:42318 on port 1883.
+1716221918: Client controller already connected, closing old connection.
+1716221918: New client connected from 172.18.0.1:42318 as controller (p2, c1, k60).
+1716221919: New connection from 172.18.0.1:42332 on port 1883.
+1716221919: Client controller already connected, closing old connection.
+1716221919: New client connected from 172.18.0.1:42332 as controller (p2, c1, k60).
+1716221920: New connection from 172.18.0.1:42336 on port 1883.
+1716221920: Client controller already connected, closing old connection.
+1716221920: New client connected from 172.18.0.1:42336 as controller (p2, c1, k60).
+1716221921: New connection from 172.18.0.1:59908 on port 1883.
+1716221921: Client controller already connected, closing old connection.
+1716221921: New client connected from 172.18.0.1:59908 as controller (p2, c1, k60).
+1716221922: New connection from 172.18.0.1:59924 on port 1883.
+1716221922: Client controller already connected, closing old connection.
+1716221922: New client connected from 172.18.0.1:59924 as controller (p2, c1, k60).
+1716221923: New connection from 172.18.0.1:59928 on port 1883.
+1716221923: Client controller already connected, closing old connection.
+1716221923: New client connected from 172.18.0.1:59928 as controller (p2, c1, k60).
+1716221924: New connection from 172.18.0.1:59936 on port 1883.
+1716221924: Client controller already connected, closing old connection.
+1716221924: New client connected from 172.18.0.1:59936 as controller (p2, c1, k60).
+1716221925: New connection from 172.18.0.1:59942 on port 1883.
+1716221925: Client controller already connected, closing old connection.
+1716221925: New client connected from 172.18.0.1:59942 as controller (p2, c1, k60).
+1716221926: New connection from 172.18.0.1:59954 on port 1883.
+1716221926: Client controller already connected, closing old connection.
+1716221926: New client connected from 172.18.0.1:59954 as controller (p2, c1, k60).
+1716221927: New connection from 172.18.0.1:59958 on port 1883.
+1716221927: Client controller already connected, closing old connection.
+1716221927: New client connected from 172.18.0.1:59958 as controller (p2, c1, k60).
+1716221928: New connection from 172.18.0.1:59972 on port 1883.
+1716221928: Client controller already connected, closing old connection.
+1716221928: New client connected from 172.18.0.1:59972 as controller (p2, c1, k60).
+1716221929: New connection from 172.18.0.1:59980 on port 1883.
+1716221929: Client controller already connected, closing old connection.
+1716221929: New client connected from 172.18.0.1:59980 as controller (p2, c1, k60).
+1716221930: New connection from 172.18.0.1:59986 on port 1883.
+1716221930: Client controller already connected, closing old connection.
+1716221930: New client connected from 172.18.0.1:59986 as controller (p2, c1, k60).
+1716221931: New connection from 172.18.0.1:55392 on port 1883.
+1716221931: Client controller already connected, closing old connection.
+1716221931: New client connected from 172.18.0.1:55392 as controller (p2, c1, k60).
+1716221932: New connection from 172.18.0.1:55400 on port 1883.
+1716221932: Client controller already connected, closing old connection.
+1716221932: New client connected from 172.18.0.1:55400 as controller (p2, c1, k60).
+1716221933: New connection from 172.18.0.1:55404 on port 1883.
+1716221933: Client controller already connected, closing old connection.
+1716221933: New client connected from 172.18.0.1:55404 as controller (p2, c1, k60).
+1716221934: New connection from 172.18.0.1:55420 on port 1883.
+1716221934: Client controller already connected, closing old connection.
+1716221934: New client connected from 172.18.0.1:55420 as controller (p2, c1, k60).
+1716221935: New connection from 172.18.0.1:55428 on port 1883.
+1716221935: New client connected from 172.18.0.1:55428 as auto-9B477C83-9AE8-479F-E7D2-0A167C42B55E (p2, c1, k60).
+1716221935: Client auto-9B477C83-9AE8-479F-E7D2-0A167C42B55E disconnected.
+1716221935: New connection from 172.18.0.1:55432 on port 1883.
+1716221935: Client controller already connected, closing old connection.
+1716221935: New client connected from 172.18.0.1:55432 as controller (p2, c1, k60).
+1716221936: New connection from 172.18.0.1:55440 on port 1883.
+1716221936: Client controller already connected, closing old connection.
+1716221936: New client connected from 172.18.0.1:55440 as controller (p2, c1, k60).
+1716221937: New connection from 172.18.0.1:55452 on port 1883.
+1716221937: Client controller already connected, closing old connection.
+1716221937: New client connected from 172.18.0.1:55452 as controller (p2, c1, k60).
+1716221938: New connection from 172.18.0.1:55460 on port 1883.
+1716221938: Client controller already connected, closing old connection.
+1716221938: New client connected from 172.18.0.1:55460 as controller (p2, c1, k60).
+1716221939: New connection from 172.18.0.1:55464 on port 1883.
+1716221939: Client controller already connected, closing old connection.
+1716221939: New client connected from 172.18.0.1:55464 as controller (p2, c1, k60).
+1716221940: New connection from 172.18.0.1:55470 on port 1883.
+1716221940: Client controller already connected, closing old connection.
+1716221940: New client connected from 172.18.0.1:55470 as controller (p2, c1, k60).
+1716221941: New connection from 172.18.0.1:45774 on port 1883.
+1716221941: Client controller already connected, closing old connection.
+1716221941: New client connected from 172.18.0.1:45774 as controller (p2, c1, k60).
+1716221942: New connection from 172.18.0.1:45776 on port 1883.
+1716221942: Client controller already connected, closing old connection.
+1716221942: New client connected from 172.18.0.1:45776 as controller (p2, c1, k60).
+1716221946: Client controller closed its connection.
+1716223113: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1716224914: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1716224928: mosquitto version 2.0.18 terminating
+1716224928: Saving in-memory database to /mosquitto/data//mosquitto.db.

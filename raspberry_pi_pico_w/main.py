@@ -9,6 +9,7 @@ from machine import Pin
 
 import secrets as cfg
 
+# connect to wifi
 wlan = network.WLAN()
 wlan.active(True)
 while not wlan.isconnected():
@@ -20,13 +21,17 @@ print('WIFI OK')
 
 class Alarm:
     def __init__(self):
+        # initialise all peripherals
         self.peripherals = {
             'RFID': MFRC522(rst=15,sck=10,cs=13,miso=12,mosi=11,spi_id=1),
             'MOTION': Pin(14,Pin.IN,Pin.PULL_DOWN),
             'BUZZER': Pin(0,Pin.OUT)
             }
+        
+        # set the device as unarmed
         self.armed = False
         
+        # keep trying to connect to mqtt indefinitely
         mqtt_ok = False
         while not mqtt_ok:
             try:
@@ -44,23 +49,28 @@ class Alarm:
             except OSError as e:
                 print('MQTT CONNECTING')
                 
-        self.mqtt.subscribe(b'device/ack')
+        # subscribe to relevant topics
+        self.mqtt.subscribe(b'device/ack'+cfg.DEVICE_ID)
         self.mqtt.subscribe(b'alarm/disarm')
         self.mqtt.subscribe(b'alarm/rearm')
+
         self.mqtt.publish(b'device/online', cfg.DEVICE_ID)
         self.mqtt.set_last_will(b'device/offline', cfg.DEVICE_ID)
         print('MQTT OK')
 
+    # defines the interrupt for the motion sensor and arms the alarm
     def rearm(self):
         self.peripherals['MOTION'].irq(trigger=Pin.IRQ_RISING, handler=self.motion_triggered)
         self.armed = True
         print('ARMED')
 
+    # clears the interrupt for the motion sensor and disarms the alarm
     def disarm(self):
         self.peripherals['MOTION'].irq(handler=None)
         self.armed = False
         print('DISARMED')
                
+    # sounds the device's buzzer
     def sound(self):
         print('SOUND')
         if self.armed:
@@ -70,6 +80,7 @@ class Alarm:
                 self.peripherals['BUZZER'].value(0)
                 utime.sleep_ms(500)
 
+    # starts polling the RFID reader
     def poll_card(self):
         while self.armed:
             self.peripherals['RFID'].init()
@@ -88,14 +99,16 @@ class Alarm:
                         utime.sleep_ms(3000)
             utime.sleep_ms(100)
 
+    # callback for the interrupt
     def motion_triggered(self, _):
         if self.armed:
             self.mqtt.publish(b'image/request', cfg.DEVICE_ID)
             print('MOVEMENT DETECTED!')
             self.poll_card()
 
+    # callback for the mqtt client
     def recv_msg(self, topic, msg):
-        if topic == b'device/ack':
+        if topic == b'device/ack'+cfg.DEVICE_ID:
             try:
                 new_RFID = int.from_bytes(bytes(msg), 'little', False)
                 cfg.RFID_AUTHORIZED.append(new_RFID)
@@ -108,14 +121,18 @@ class Alarm:
         elif topic == b'alarm/sound':
             self.sound()
             
-            
-            
+                  
             
 if __name__ == '__main__':
     alarm = Alarm()
     print('BOOT OK')
     while True:
         if not alarm.armed:
+            # if the alarm is not armed, we can use a blocking function to wait
+            # for the rearm message
             alarm.mqtt.wait_msg()
         else:
+            # otherwise we unfortunately have to poll for new mqtt messages
+            # because the blocking `wait_msg` also prevents the interrupt from the movement sensor
             alarm.mqtt.check_msg()
+            utime.sleep_ms(100)

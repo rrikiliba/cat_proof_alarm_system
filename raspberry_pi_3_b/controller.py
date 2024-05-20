@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from ultralytics import YOLO
 import paho.mqtt as mqtt
 from paho.mqtt import client as _
@@ -7,16 +8,25 @@ import datetime
 
 class Controller:
     def __init__(self):
+        # load the YOLOv8 pre-trained model
         self.yolo = YOLO("model/yolov8n.pt")
+        # connect to mqtt
         self.mqtt = mqtt.client.Client(mqtt.client.CallbackAPIVersion.VERSION2, client_id='controller')
-        self.mqtt.tls_set(tls_version=mqtt.client.ssl.PROTOCOL_TLS)
+        # during testing we used a cloud based broker that required TLS
+        # self.mqtt.tls_set(tls_version=mqtt.client.ssl.PROTOCOL_TLS)
         
+        # set of currently connected devices
         self.devices = set()
+
+        # set of RFID keys authorized to defeuse the alarm
         self.authorized = set()
 
+        # states for the controller
         self.triggered = False
         self.armed = False
 
+        # subscribe to topics on connect
+        # so that subscriptions don't get lost in case of reconnection
         def on_connect(client, userdata, flags, reason_code, properties):
             client.subscribe('image/submit')
             client.subscribe('image/request')
@@ -27,7 +37,11 @@ class Controller:
             client.subscribe('alarm/rearm')
         self.mqtt.on_connect = on_connect
 
-    def detect_cat(self, file_path) -> bool:
+
+    # detects a cat in the image with the given file path
+    # will return True if the confidence of cat or dog detection
+    # is above a certain treshold (75%)
+    def detect_cat(self, file_path: str) -> bool:
         result = self.yolo.predict(file_path)[0]
 
         for box in result.boxes:
@@ -46,27 +60,58 @@ class Controller:
     def start(user, password, host, port):
         time.sleep(10)
         controller = Controller()
-        controller.mqtt.username_pw_set(user, password)
+        #controller.mqtt.username_pw_set(user, password)
 
+        # callback for mqtt message reception
         def on_message(client, userdata, msg):
             match msg.topic:
 
+                # in case a new device comes online
                 case 'device/online':
+                    
+                    # save it to the online devices
                     controller.devices.add(str(msg.payload))
+                    
+                    # log the  event
                     print(f'DEVICE ONLINE: {msg.payload}')
-                    for id in controller.authorized:
-                        controller.mqtt.publish('device/ack', payload=f'{msg.payload}+{id}', qos=1)
-                    if controller.armed:
-                        controller.mqtt.publish('alarm/rearm', payload=msg.payload, qos=1)
 
+                    # if the device is not in the list, it is newly connected
+                    if msg.payload not in controller.devices:
+                        
+                        # send the list of authorized keys to the new device
+                        for id in controller.authorized:
+                            controller.mqtt.publish(f'device/ack/{msg.payload}', payload=f'{id}', qos=1)
+
+                        # attempt to rearm the new device                    
+                        if controller.armed:
+                            controller.mqtt.publish(f'alarm/rearm/{msg.payload}', None, qos=1)
+                    
+                    # if the device was already in the list, it was disconnected abruptly,
+                    # but it has now reconnected, so defuse the alarm internally
+                    else:
+                        controller.triggered = False
+
+                # in case a device goes offline
                 case 'device/offline':
+
+                    # log the event
                     print(f'DEVICE OFFLINE: {msg.payload}')
+
+                    # take action if the device is brought offline
+                    # while the system is armed
                     if controller.armed:
+
+                        # consider the alarm triggered
                         controller.triggered = True
+
+                        # start a 20 second timer before sounding the alarm
+                        # so that the device has time to reconnect
+                        # or the user has time to disarm manually
                         def timer_callback(device=None):
                             for i in range(20):
                                 time.sleep(1)
                             if controller.triggered:
+                                controller.devices.discard(device)
                                 controller.mqtt.publish('alarm/sound', payload=None, qos=1)
                                 print('ALARM SOUND')
                         timer = Thread(target=timer_callback, kwargs={'device': str(msg.payload)})
@@ -74,17 +119,30 @@ class Controller:
                     else:
                         controller.devices.remove(msg.payload)
                         
+                # in case an image is submitted to for inference
                 case 'image/submit':
+
+                    # log the event
                     print('IMAGE RECEIVED')
+
+                    # save the image to file
                     file_path = f'/images/{datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:&S")}'
                     with open(file_path, 'wb') as file:
                         file.write(msg.payload)
+
+                        # defuse the alarm if cat detected
                         if controller.detect_cat(file_path):
                             controller.triggered = False
-                            controller.mqtt.publish('alarm/defuse', payload=msg.payload, qos=1)
-
+                
+                # in case an image is requested (which means a motion sensor was activated)
                 case 'image/request':
+
+                    # log the event
                     print('IMAGE REQUESTED')
+
+                    # start a 20 second timer before sounding the alarm
+                    # so that there is time to use the RFID to disarm the system
+                    # and to perform inference to check if a cat is in the image
                     controller.triggered = True
                     def timer_callback(device=None):
                         for i in range(20):
@@ -94,15 +152,13 @@ class Controller:
                     timer = Thread(target=timer_callback, kwargs={'device': str(msg.payload)})
                     timer.start()
 
+                # in case the alarm needs to be disarmed
                 case 'alarm/disarm':
                     print('ALARM DISARMED')
                     controller.armed = False
                     controller.triggered = False
 
-                case 'alarm/defuse':
-                    print('ALARM DEFUSED')
-                    controller.triggered = False
-
+                # in case the alarm needs to be rearmed
                 case 'alarm/rearm':
                     print('ALARM REARMED')
                     controller.armed = True

@@ -60,3 +60,4 @@ dmypy.json
 
 */*/secrets.py
 */secrets.py
+*.db
