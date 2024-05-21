@@ -50,9 +50,10 @@ class Alarm:
                 print('MQTT CONNECTING')
                 
         # subscribe to relevant topics
-        self.mqtt.subscribe(b'device/ack'+cfg.DEVICE_ID)
+        self.mqtt.subscribe(b'device/ack/'+cfg.DEVICE_ID)
         self.mqtt.subscribe(b'alarm/disarm')
         self.mqtt.subscribe(b'alarm/rearm')
+        self.mqtt.subscribe(b'alarm/sound')
 
         self.mqtt.publish(b'device/online', cfg.DEVICE_ID)
         self.mqtt.set_last_will(b'device/offline', cfg.DEVICE_ID)
@@ -63,18 +64,27 @@ class Alarm:
         self.peripherals['MOTION'].irq(trigger=Pin.IRQ_RISING, handler=self.motion_triggered)
         self.armed = True
         print('ARMED')
+        self.peripherals['BUZZER'].value(1)
+        utime.sleep_ms(600)
+        self.peripherals['BUZZER'].value(0)
 
     # clears the interrupt for the motion sensor and disarms the alarm
     def disarm(self):
         self.peripherals['MOTION'].irq(handler=None)
         self.armed = False
         print('DISARMED')
+        self.peripherals['BUZZER'].value(1)
+        utime.sleep_ms(200)
+        self.peripherals['BUZZER'].value(0)
+        utime.sleep_ms(200)
                
     # sounds the device's buzzer
     def sound(self):
         print('SOUND')
         if self.armed:
-            for _ in range(5):
+            for _ in range(10):
+                if not self.armed:
+                    break
                 self.peripherals['BUZZER'].value(1)
                 utime.sleep_ms(1000)
                 self.peripherals['BUZZER'].value(0)
@@ -83,20 +93,37 @@ class Alarm:
     # starts polling the RFID reader
     def poll_card(self):
         while self.armed:
+
+            # we use a *very* small subset of functionalities from the RFID sensor driver
             self.peripherals['RFID'].init()
-            (stat, tag_type) = self.peripherals['RFID'].request(self.peripherals['RFID'].REQIDL)
-            if stat == self.peripherals['RFID'].OK:
-                (stat, uid) = self.peripherals['RFID'].SelectTagSN()
-                if stat == self.peripherals['RFID'].OK:
+            (status, _) = self.peripherals['RFID'].request(self.peripherals['RFID'].REQIDL)
+            if status == self.peripherals['RFID'].OK:
+
+                # if the sensor is ready, attempt to read RFID card
+                (status, uid) = self.peripherals['RFID'].SelectTagSN()
+                if status == self.peripherals['RFID'].OK:
+
+                    # if status indicates success, parse numeric uid from card
                     print('CARD SCANNED')
                     card = int.from_bytes(bytes(uid), 'little', False)
+
+                    # if the uid denotes a card which is authorized to defuse the alarm, do so
                     if card in cfg.RFID_AUTHORIZED:
                         print('AUTH OK')
                         self.mqtt.publish(b'alarm/disarm', cfg.DEVICE_ID)
                         self.disarm()
+
+                    # otherwise, the card is invalid;
+                    # give a small timeout and notify the user
                     else:
                         print('AUTH FAIL')
-                        utime.sleep_ms(3000)
+                        utime.sleep_ms(1000)
+                        for _ in range(3):
+                            self.peripherals['BUZZER'].value(1)
+                            utime.sleep_ms(200)
+                            self.peripherals['BUZZER'].value(0)
+                            utime.sleep_ms(200)
+            self.mqtt.check_msg()
             utime.sleep_ms(100)
 
     # callback for the interrupt
@@ -108,7 +135,7 @@ class Alarm:
 
     # callback for the mqtt client
     def recv_msg(self, topic, msg):
-        if topic == b'device/ack'+cfg.DEVICE_ID:
+        if topic == b'device/ack/'+cfg.DEVICE_ID:
             try:
                 new_RFID = int.from_bytes(bytes(msg), 'little', False)
                 cfg.RFID_AUTHORIZED.append(new_RFID)
