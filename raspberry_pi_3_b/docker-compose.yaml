@@ -1,0 +1,34 @@
+services:
+  mosquitto:
+    image: eclipse-mosquitto:latest
+    networks:
+      - alarm_network
+    hostname: mosquitto
+    container_name: alarm_broker
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto/etc:/etc/mosquitto
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+  controller:
+    image: cat_proof_alarm_system:latest
+    networks:
+      - alarm_network
+    hostname: alarm_server
+    container_name: alarm_controller
+    restart: unless-stopped
+    stop_grace_period: 1.5s
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./images:/alarm/images
+networks:
+  alarm_network:
+    driver: bridge
+    ipam:
+      driver: default
+
