@@ -26,6 +26,9 @@ services:
       - "5000:5000"
     volumes:
       - ./images:/alarm/images
+    env_file:
+      - path: .env
+        required: true
 networks:
   alarm_network:
     driver: bridge

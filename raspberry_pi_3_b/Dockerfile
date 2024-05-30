@@ -7,6 +7,7 @@ RUN chmod +x /tini
 WORKDIR /alarm
 
 COPY ./requirements.txt .
+RUN pip install torch==2.3.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
 RUN pip install -r requirements.txt
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install\
@@ -15,7 +16,6 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install\
     libglib2.0-0 -y && \
     rm -rf /var/lib/apt/lists/*
 
-COPY ./.env .
 COPY ./*.py .
 COPY ./model ./model
 COPY ./static ./static

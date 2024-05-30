@@ -169,8 +169,6 @@ class Controller:
 
 if __name__ == '__main__':
     from os import getenv
-    from dotenv import load_dotenv
-    load_dotenv()
     Controller.start(user=getenv('MQTT_USER'),
                      password=getenv('MQTT_PASSWORD'),
                      host=getenv('MQTT_HOST'),
