@@ -2,7 +2,7 @@ import network
 import camera
 import utime
 import machine
-
+from umqtt.simple import MQTTClient
 import secrets as cfg
 
 # connect to wifi
@@ -15,7 +15,8 @@ while not wlan.isconnected():
 print('WIFI OK')
 
 camera.init(0, format=camera.JPEG, fb_location=camera.PSRAM)
-def recv_msg(self, topic, msg):
+def recv_msg(topic, msg):
+    print('IMG REQ')
     buf = camera.capture()
     mqtt.publish(b'image/submit', buf)
 
@@ -44,4 +45,6 @@ print('MQTT OK')
 if __name__ == '__main__':
     print('BOOT OK')
     while True:
-        mqtt.wait_msg()
+        mqtt.check_msg()
+        utime.sleep_ms(100)
+
