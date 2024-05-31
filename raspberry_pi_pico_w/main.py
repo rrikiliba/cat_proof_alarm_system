@@ -129,7 +129,7 @@ class Alarm:
     # callback for the interrupt
     def motion_triggered(self, _):
         if self.armed:
-            self.mqtt.publish(b'image/request', cfg.DEVICE_ID)
+            self.mqtt.publish(b'image/request', cfg.CAM_ID)
             print('MOVEMENT DETECTED!')
             self.poll_card()
 

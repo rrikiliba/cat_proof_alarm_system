@@ -16,9 +16,10 @@ print('WIFI OK')
 
 camera.init(0, format=camera.JPEG, fb_location=camera.PSRAM)
 def recv_msg(topic, msg):
-    print('IMG REQ')
-    buf = camera.capture()
-    mqtt.publish(b'image/submit', buf)
+    if msg == cfg.DEVICE_ID:
+        print('IMG REQ')
+        buf = camera.capture()
+        mqtt.publish(b'image/submit', buf)
 
 # keep trying to connect to mqtt indefinitely
 mqtt_ok = False
@@ -27,11 +28,12 @@ while not mqtt_ok:
         mqtt = MQTTClient(client_id=cfg.DEVICE_ID,
                             server=cfg.MQTT_BROKER,
                             port=cfg.MQTT_PORT,
-                            user=cfg.MQTT_USER,
-                            password=cfg.MQTT_PASSWORD,
+                            #user=cfg.MQTT_USER,
+                            #password=cfg.MQTT_PASSWORD,
                             keepalive=60,
-                            ssl=cfg.MQTT_SSL,
-                            ssl_params=cfg.MQTT_SSL_PARAMS)
+                            #ssl=cfg.MQTT_SSL,
+                            #ssl_params=cfg.MQTT_SSL_PARAMS
+                          )
         mqtt.set_callback(recv_msg)
         mqtt.connect()
         mqtt_ok = True
@@ -47,4 +49,3 @@ if __name__ == '__main__':
     while True:
         mqtt.check_msg()
         utime.sleep_ms(100)
-

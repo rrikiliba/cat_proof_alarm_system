@@ -8,6 +8,7 @@ import datetime
 
 class Controller:
     def __init__(self):
+        print(' * Loading YOLO model')
         # load the YOLOv8 pre-trained model
         self.yolo = YOLO("model/yolov8n.pt")
         # connect to mqtt
@@ -28,6 +29,7 @@ class Controller:
         # subscribe to topics on connect
         # so that subscriptions don't get lost in case of reconnection
         def on_connect(client, userdata, flags, reason_code, properties):
+            print(' * MQTT client connected')
             client.subscribe('image/submit')
             client.subscribe('image/request')
             client.subscribe('device/online')
@@ -58,7 +60,7 @@ class Controller:
         return False
     
     def start(user, password, host, port):
-        time.sleep(10)
+        print(' * Starting MQTT client')
         controller = Controller()
         #controller.mqtt.username_pw_set(user, password)
 
@@ -126,7 +128,7 @@ class Controller:
                     print('IMAGE RECEIVED')
 
                     # save the image to file
-                    file_path = f'/images/{datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:&S")}'
+                    file_path = f'images/{datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")}.jpeg'
                     with open(file_path, 'wb') as file:
                         file.write(msg.payload)
 
