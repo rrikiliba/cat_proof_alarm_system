@@ -53,10 +53,10 @@ class Controller:
             #     self.mqtt.publish('alarm/sound', payload=None, qos=1)
             #     return False
             if obj == 'cat' or obj == 'dog' and confidence > 0.75:
-                print(f'false alarm, it was a {obj}\t(I\'m {confidence*100}% sure)')
+                print(f'False alarm, it was a {obj}\t(I\'m {confidence*100}% sure)')
                 return True
     
-        print('no cat detected')
+        print('No cat detected')
         return False
     
     def start(user, password, host, port):
@@ -125,7 +125,7 @@ class Controller:
                 case 'image/submit':
 
                     # log the event
-                    print('IMAGE RECEIVED')
+                    print('Image received')
 
                     # save the image to file
                     file_path = f'images/{datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")}.jpeg'
@@ -135,12 +135,14 @@ class Controller:
                         # defuse the alarm if cat detected
                         if controller.detect_cat(file_path):
                             controller.triggered = False
+                        else :
+                            print('N')
                 
                 # in case an image is requested (which means a motion sensor was activated)
                 case 'image/request':
 
                     # log the event
-                    print('IMAGE REQUESTED')
+                    print('Image requested')
 
                     # start a 20 second timer before sounding the alarm
                     # so that there is time to use the RFID to disarm the system
@@ -156,17 +158,19 @@ class Controller:
 
                 # in case the alarm needs to be disarmed
                 case 'alarm/disarm':
-                    print('ALARM DISARMED')
+                    print('Alarm disarmed')
                     controller.armed = False
                     controller.triggered = False
 
                 # in case the alarm needs to be rearmed
                 case 'alarm/rearm':
-                    print('ALARM REARMED')
+                    print('Alarm rearmed')
                     controller.armed = True
 
         controller.mqtt.on_message = on_message
         controller.mqtt.connect(host, port, 60)
+
+        print(' * Now running')
         controller.mqtt.loop_forever()
 
 if __name__ == '__main__':

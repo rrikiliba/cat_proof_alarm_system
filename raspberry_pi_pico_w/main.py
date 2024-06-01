@@ -8,17 +8,7 @@ import machine
 from machine import Pin
 
 import secrets as cfg
-
-# connect to wifi
-wlan = network.WLAN()
-wlan.active(True)
-while not wlan.isconnected():
-    print('WIFI CONNECTING')
-    wlan.connect(cfg.WIFI_SSID, cfg.WIFI_PASSWORD)
-    utime.sleep_ms(1000)
-print('WIFI OK')
  
-
 class Alarm:
     def __init__(self):
         # initialise all peripherals
@@ -30,24 +20,9 @@ class Alarm:
         
         # set the device as unarmed
         self.armed = False
-        
-        # keep trying to connect to mqtt indefinitely
-        mqtt_ok = False
-        while not mqtt_ok:
-            try:
-                self.mqtt = MQTTClient(client_id=cfg.DEVICE_ID,
-                                        server=cfg.MQTT_BROKER,
-                                        port=cfg.MQTT_PORT,
-                                        user=cfg.MQTT_USER,
-                                        password=cfg.MQTT_PASSWORD,
-                                        keepalive=60,
-                                        ssl=cfg.MQTT_SSL,
-                                        ssl_params=cfg.MQTT_SSL_PARAMS)
-                self.mqtt.set_callback(self.recv_msg)
-                self.mqtt.connect()
-                mqtt_ok = True
-            except OSError as e:
-                print('MQTT CONNECTING')
+
+        self.connect_to_wifi()
+        self.connect_to_mqtt()
                 
         # subscribe to relevant topics
         self.mqtt.subscribe(b'device/ack/'+cfg.DEVICE_ID)
@@ -58,6 +33,39 @@ class Alarm:
         self.mqtt.publish(b'device/online', cfg.DEVICE_ID)
         self.mqtt.set_last_will(b'device/offline', cfg.DEVICE_ID)
         print('MQTT OK')
+
+    # connect to wifi
+    def connect_to_wifi(self):
+        self.wlan = network.WLAN()
+        self.wlan.active(True)
+        while not self.wlan.isconnected():
+            print('WIFI CONNECTING')
+            self.wlan.connect(cfg.WIFI_SSID, cfg.WIFI_PASSWORD)
+            utime.sleep_ms(1000)
+        print('WIFI OK')
+
+    # connect to mqtt
+    def connect_to_mqtt(self):
+        while True:
+            try:
+                self.mqtt = MQTTClient(client_id=cfg.DEVICE_ID,
+                    server=cfg.MQTT_BROKER,
+                    port=cfg.MQTT_PORT,
+                    #user=cfg.MQTT_USER,
+                    #password=cfg.MQTT_PASSWORD,
+                    keepalive=60,
+                    #ssl=cfg.MQTT_SSL,
+                    #ssl_params=cfg.MQTT_SSL_PARAMS
+                    )
+                self.mqtt.set_callback(self.recv_msg)
+                self.mqtt.connect()
+                # subscribe to relevant topics
+                self.mqtt.subscribe(b'image/request')
+                print('MQTT OK')
+                return
+            except OSError as e:
+                print('MQTT CONNECTING')
+                utime.sleep_ms(1000)
 
     # defines the interrupt for the motion sensor and arms the alarm
     def rearm(self):
@@ -154,12 +162,10 @@ if __name__ == '__main__':
     alarm = Alarm()
     print('BOOT OK')
     while True:
-        if not alarm.armed:
-            # if the alarm is not armed, we can use a blocking function to wait
-            # for the rearm message
-            alarm.mqtt.wait_msg()
-        else:
-            # otherwise we unfortunately have to poll for new mqtt messages
-            # because the blocking `wait_msg` also prevents the interrupt from the movement sensor
+        try:
             alarm.mqtt.check_msg()
             utime.sleep_ms(100)
+        except:
+            print('CONN LOST')
+            alarm.connect_to_wifi()
+            alarm.connect_to_mqtt()
