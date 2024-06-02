@@ -1,37 +1,20 @@
 <!DOCTYPE html>
 <html>
 <body>
-    <h1>MQTT Client</h1>
-    <p id="status">Status: Disconnected</p>
-    <h2>Messages</h2>
-    <ul id="messages"></ul>
-    
+    <h1>Connect to your home alarm</h1>
+    <p id="brokerStatus">Broker status: Disconnected</p>
+    <p id="alarmStatus">Alarm status: Disconnected</p>
+    <form id="brokerForm">
+        <label for="brokerAddress">Indirizzo IP del Broker:</label><br>
+        <input type="text" id="brokerAddress" name="brokerAddress"><br>
+        <input type="submit" value="Connect">
+    </form>
+    <button id="setAlarm">Arm</button>
+    <button id = "callTheCops">Click here to call the cops</button>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
-
-    <script>
-        client = new Paho.MQTT.Client("192.168.1.200", Number(9001), "js_client");
-
-        // set callback handlers
-        client.onConnectionLost = function (responseObject) {
-            console.log("Connection Lost: "+responseObject.errorMessage);
-        }
-
-        client.onMessageArrived = function (message) {
-        console.log("Message Arrived: "+message.payloadString);
-        }
-
-        // Called when the connection is made
-        function onConnect(){
-            document.getElementById('status').textContent = "Status: Connected";
-        }
-
-        // Connect the client, providing an onConnect callback
-        client.connect({
-            onSuccess: onConnect,
-            onFailure: function (error) {
-                console.log("Connection failed: ", error.errorMessage);
-            },
-        });
-    </script>
+    <script src="script.js"></script>
+    <div id="imageContainer"></div>
+    <link rel="stylesheet" type="text/css" href="style.css">
 </body>
 </html>

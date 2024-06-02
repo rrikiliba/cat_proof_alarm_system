@@ -1,0 +1,49 @@
+* {
+    margin: 10px;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    padding: 0 0 0 30px; /* top right bottom left */
+}
+
+h1, h2, h3 {
+    color: #333;
+}
+
+p {
+    color: #666;
+    line-height: 1.6em;
+}
+
+#setAlarm {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+#setAlarm:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+#callTheCops {
+    display: none;
+    background-color: red;
+    color: white;
+    font-size: 2em; /* make the button text larger */
+    padding: 20px; /* add some padding to make the button larger */
+    animation: blink 1s infinite; /* make the button blink */
+}
+
+@keyframes blink {
+    0% { opacity: 1.0; }
+    50% { opacity: 0.0; }
+    100% { opacity: 1.0; }
+}
