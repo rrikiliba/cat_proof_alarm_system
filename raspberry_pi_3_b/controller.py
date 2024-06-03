@@ -35,7 +35,6 @@ class Controller:
             client.subscribe('device/online')
             client.subscribe('device/offline')
             client.subscribe('alarm/disarm')
-            client.subscribe('alarm/defuse')
             client.subscribe('alarm/rearm')
         self.mqtt.on_connect = on_connect
 

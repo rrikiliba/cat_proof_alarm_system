@@ -4,11 +4,12 @@ var isArmed = false;
 function onConnect() {
     console.log("Connected to broker");
     document.getElementById('brokerStatus').textContent = "Broker status: Connected";
-    client.subscribe('image/request')
-    client.subscribe('device/online')
-    client.subscribe('device/offline')
+    // client.subscribe('image/request')
+    client.subscribe('image/submit')
+    // client.subscribe('device/online')
+    // client.subscribe('device/offline')
     client.subscribe('alarm/disarm')
-    client.subscribe('alarm/defuse')
+    client.subscribe('alarm/sound')
     client.subscribe('alarm/rearm')
 
     isArmed = true;
@@ -35,19 +36,19 @@ function onMessageArrived(message) {
         document.getElementById('image').src = "data:image/jpeg;base64," + message.payloadString;
         onImageRecived();
     }
-    if(message.destinationName === "device/online") {
-        document.getElementById('setAlarm').disabled = false;
-        document.getElementById('alarmStatus').textContent = "Broker status: Connected";
-    }
-    if(message.destinationName === "device/offline") {
-        document.getElementById('setAlarm').disabled = true;
-        document.getElementById('alarmStatus').textContent = "Alarm status: Disconnected";
-    }
-    if(message.destinationName === "alarm/defuse") {
-        document.getElementById('setAlarm').disabled = false;
-        isArmed = false;
-        setButtonState();
-    }
+    // if(message.destinationName === "device/online") {
+    //     document.getElementById('setAlarm').disabled = false;
+    //     document.getElementById('alarmStatus').textContent = "Broker status: Connected";
+    // }
+    // if(message.destinationName === "device/offline") {
+    //     document.getElementById('setAlarm').disabled = true;
+    //     document.getElementById('alarmStatus').textContent = "Alarm status: Disconnected";
+    // }
+    // if(message.destinationName === "alarm/defuse") {
+    //     document.getElementById('setAlarm').disabled = false;
+    //     isArmed = false;
+    //     setButtonState();
+    // }
     if(message.destinationName === "alarm/rearm") {
         document.getElementById('setAlarm').disabled = false;
         isArmed = true;
