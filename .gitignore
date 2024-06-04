@@ -62,4 +62,8 @@ dmypy.json
 */secrets.py
 *.db
 mosquitto
+<<<<<<< HEAD
 authfile
+=======
+RFID_IDs
+>>>>>>> e06db6bbeb86da79b7245555a62113bfca6df7b7
