@@ -20,7 +20,17 @@ class Controller:
         self.devices = set()
 
         # set of RFID keys authorized to defeuse the alarm
+        print(' * Loading authorized file')
         self.authorized = set()
+        with open('.authfile') as file:
+            count = 0
+            for line in file:
+                try: 
+                    self.authorized.add(int(line.rstrip()))
+                    count = count + 1
+                except:
+                    print(f' * Found malformed entry at line {count}')
+            print(f' * Loaded {count} entries')
 
         # states for the controller
         self.triggered = False
