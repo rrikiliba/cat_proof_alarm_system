@@ -13,14 +13,11 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install\
 
 
 RUN pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cpu
-RUN pip install -r requirements.txt
+RUN pip3 install -r requirements.txt
 
 COPY ./*.py .
 COPY ./model ./model
 COPY ./static ./static
-
-RUN useradd -m -r user
-RUN chown user -R .
-USER user
+COPY ./RFID_IDs ./RFID_IDs
 
 CMD [ "./app.py" ]
