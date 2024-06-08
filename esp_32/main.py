@@ -51,6 +51,7 @@ def init_camera():
         try:
             camera.init(0, format=camera.JPEG, fb_location=camera.PSRAM)
             print('CAM OK')
+            break
         except:
             camera.deinit()
             utime.sleep_ms(1000)
