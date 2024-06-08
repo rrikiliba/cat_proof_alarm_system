@@ -15,7 +15,6 @@ services:
       - ./mosquitto/data:/mosquitto/data
       - ./mosquitto/log:/mosquitto/log
   controller:
-    image: cat_proof_alarm_system:latest
     build: .
     networks:
       - alarm_network
