@@ -18,6 +18,5 @@ RUN pip3 install -r requirements.txt
 COPY ./*.py .
 COPY ./model ./model
 COPY ./static ./static
-COPY ./.authfile ./.authfile
 
 CMD [ "./app.py" ]

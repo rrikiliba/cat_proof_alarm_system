@@ -26,6 +26,7 @@ services:
       - "5000:5000"
     volumes:
       - ./images:/alarm/images
+      - ./.authfile:/alarm/.authfile
     env_file:
       - path: .env
         required: true
