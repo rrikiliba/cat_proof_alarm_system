@@ -88,8 +88,8 @@ class Alarm:
                
     # sounds the device's buzzer
     def sound(self):
-        print('SOUND')
         if self.armed:
+            print('SOUND')
             for _ in range(10):
                 if not self.armed:
                     break
@@ -97,6 +97,7 @@ class Alarm:
                 utime.sleep_ms(1000)
                 self.peripherals['BUZZER'].value(0)
                 utime.sleep_ms(500)
+            self.armed = False
 
     # starts polling the RFID reader
     def poll_card(self):
