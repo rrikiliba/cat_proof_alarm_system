@@ -3,7 +3,6 @@
 ### Developed by:
 
 - Riccardo Libanora 
-- Marco Pulze
 - Davide Zanolini
 
 This project, developed by three students of the University of Trento, aims to create a comprehensive home security system. 
