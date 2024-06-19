@@ -100,7 +100,7 @@ class Alarm:
                 utime.sleep_ms(1000)
                 self.peripherals['BUZZER'].value(0)
                 utime.sleep_ms(500)
-            self.armed = False
+            self.disarm()
 
     # starts polling the RFID reader
     def poll_card(self):
