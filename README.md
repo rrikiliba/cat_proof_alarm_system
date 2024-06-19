@@ -1,11 +1,13 @@
 # Cat Proof Alarm System - Embedded software for the internet of things
 
-### Introduction
+## Introduction
 
 This project, developed by two students of the University of Trento, aims to create a comprehensive home security system.
 The goal is to develop a system that enables users to utilize a motion-based security system within their homes, even in the presence of pets that might trigger the alarm. Our solution allows users to receive alerts upon motion detection, enabling them to view a captured image of the movement and decide whether to activate the alarm.
 
 ## Requirements
+### Hardware
+### Software
 
 ## Project layout
 ```
@@ -33,13 +35,26 @@ The goal is to develop a system that enables users to utilize a motion-based sec
     ├── [lib]
     └── main.py
 ```
-## How to buid and run the project
+## How to run the project
+
+### Raspberry pi pico w
+### Esp32
+### Orange pi zero 2w
 
 ## User guide
 
-# Links
+## Links
+a. [powerpoint]()
+a. [presentation video]()
 
-# Team members
+## Team members' contributions
 
-- Riccardo Libanora: developed the code to operate the boards
-- Davide Zanolini: developed the code to enable communication between the different boards and the web page, create the documentation
+Riccardo Libanora:
+    - Raspberry pi pico w code development
+    - Esp32 code development
+    - Orange pi zero 2w code development
+    - Mqtt broker and topics setup
+Davide Zanolini: 
+	- Webapp graphic interface
+	- Webapp interface to mqtt via websockets 
+	- Documentation
