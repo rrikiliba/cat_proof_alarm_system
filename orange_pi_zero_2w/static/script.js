@@ -1,5 +1,15 @@
 var client;
 var isArmed = false;
+let ipAddress;
+
+//
+fetch('https://api.ipify.org?format=json')
+    .then(response => response.json())
+    .then(data => {
+        ipAddress = data.ip;
+        console.log(ipAddress);
+    })
+    .catch(error => console.error('Error:', error));
 
 function onConnect() {
     console.log("Connected to broker");
@@ -72,18 +82,24 @@ function onImageRecived(){
 
 document.getElementById('brokerForm').addEventListener('submit', function(e) {
     e.preventDefault();
-    var brokerAddress = document.getElementById('brokerAddress').value;
+    var brokerPassword = document.getElementById('brokerPassword').value;
 
-    client = new Paho.MQTT.Client(brokerAddress, Number(9001), "clientId");
-    client.onConnectionLost = onConnectionLost;
-    client.onMessageArrived = onMessageArrived;
-
-    client.connect({
-        onSuccess: onConnect,
-        onFailure: function (error) {
-            console.log("Connection failed: ", error.errorMessage);
-        },
-    });
+    try {
+        client = new Paho.MQTT.Client(ipAddress, Number(1883), "webPage");
+        client.onConnectionLost = onConnectionLost;
+        client.onMessageArrived = onMessageArrived;
+        client.connect({
+            onSuccess: onConnect,
+            onFailure: function (error) {
+                console.log("Connection failed: ", error.errorMessage);
+            },
+            //userName: "sinan",
+            //password: brokerPassword
+        });
+    } catch (error) {
+        console.error("Failed to connect to broker: ", error);
+        alert("Failed to connect to broker: " + error.message);
+    }
 });
 
 document.getElementById('setAlarm').addEventListener('click', function() {
