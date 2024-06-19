@@ -8,7 +8,7 @@ The goal is to develop a system that enables users to utilize a motion-based sec
 ## Requirements
 
 ## Project layout
-![alt text](image.png)
+!Image
 
 ## How to buid and run the project
 
