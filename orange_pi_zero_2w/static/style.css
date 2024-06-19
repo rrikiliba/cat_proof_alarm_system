@@ -42,6 +42,16 @@ p {
     animation: blink 1s infinite; /* make the button blink */
 }
 
+#imageContainer {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#imageContainer > image {
+    padding: 5%;
+    border-radius: 5px;
+}
+
 @keyframes blink {
     0% { opacity: 1.0; }
     50% { opacity: 0.0; }
