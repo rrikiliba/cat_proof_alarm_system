@@ -8,8 +8,55 @@ The goal is to develop a system that enables users to utilize a motion-based sec
 ## Requirements
 
 ## Project layout
-!Image
-
+'''
+[cat_proof_alarm_system]
+    ├── [.git] (...)
+    ├── .gitignore
+    ├── [esp_32]
+        ├── [firmware]
+            └── micropython_camera_feeeb5ea3_esp32_idf4_4.bin
+        ├── [lib]
+            └── [umqtt]
+                └── simple.py
+        └── main.py
+    ├── generate_secrets.sh
+    ├── [orange_pi_zero_2w]
+        ├── .authfile
+        ├── .env
+        ├── app.py
+        ├── controller.py
+        ├── docker-compose.yaml
+        ├── Dockerfile
+        ├── [images]
+        ├── [model]
+            └── yolov8n.pt
+        ├── [mosquitto]
+            ├── [data]
+            ├── [etc]
+            ├── [log]
+            └── [mosquitto.conf]
+        ├── requirements.txt
+        └── [static]
+            ├── index.html
+            ├── script.js
+            └── style.css
+    ├── [raspberry_pi_3_b]
+        └── [mosquitto]
+            ├── [mosquitto.conf]
+            ├── [mosquitto_data]
+                └── mosquitto.db
+            ├── [mosquitto_etc]
+            └── [mosquitto_log]
+    ├── [raspberry_pi_pico_w]
+        ├── [firmware]
+            └── RPI_PICO_W-20240222-v1.22.2.uf2
+        ├── [lib]
+            ├── mfrc522.py
+            └── [umqtt]
+                └── simple.py
+        └── main.py
+    └── README.md
+'''
 ## How to buid and run the project
 
 ## User guide
