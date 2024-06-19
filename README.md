@@ -52,13 +52,13 @@ a. [presentation video]()
 
 Riccardo Libanora:
 
-    - Raspberry pi pico w code development
-    - Esp32 code development
-    - Orange pi zero 2w code development
-    - Mqtt broker and topics setup
+- Raspberry pi pico w code development
+- Esp32 code development
+- Orange pi zero 2w code development
+- Mqtt broker and topics setup
 
 Davide Zanolini: 
 
-	- Webapp graphic interface
-	- Webapp interface to mqtt via websockets 
-	- Documentation
+- Webapp graphic interface
+- Webapp interface to mqtt via websockets 
+- Documentation
