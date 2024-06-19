@@ -44,17 +44,21 @@ The goal is to develop a system that enables users to utilize a motion-based sec
 ## User guide
 
 ## Links
+
 a. [powerpoint]()
 a. [presentation video]()
 
 ## Team members' contributions
 
 Riccardo Libanora:
+
     - Raspberry pi pico w code development
     - Esp32 code development
     - Orange pi zero 2w code development
     - Mqtt broker and topics setup
+
 Davide Zanolini: 
+
 	- Webapp graphic interface
 	- Webapp interface to mqtt via websockets 
 	- Documentation
