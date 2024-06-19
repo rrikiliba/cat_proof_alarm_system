@@ -8,6 +8,7 @@ The goal is to develop a system that enables users to utilize a motion-based sec
 ## Requirements
 
 ## Project layout
+```
 [cat_proof_alarm_system]
 ├── [.git] (...)
 ├── .gitignore
@@ -54,7 +55,7 @@ The goal is to develop a system that enables users to utilize a motion-based sec
     │   └── [umqtt]
     │       └── simple.py
     └── main.py
-
+```
 ## How to buid and run the project
 
 ## User guide
