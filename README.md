@@ -77,8 +77,8 @@ Each of the three boards require a different setup in order to run the designate
 
 ## Links
 
-a. [powerpoint]()
-a. [presentation video]()
+1. [powerpoint]()
+1. [presentation video]()
 
 ## Team members' contributions
 
