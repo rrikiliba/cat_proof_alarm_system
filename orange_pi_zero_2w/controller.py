@@ -39,7 +39,6 @@ class Controller:
         # subscribe to topics on connect
         # so that subscriptions don't get lost in case of reconnection
         def on_connect(client, userdata, flags, reason_code, properties):
-            print(' * MQTT client connected')
             client.subscribe('image/submit')
             client.subscribe('image/request')
             client.subscribe('device/online')

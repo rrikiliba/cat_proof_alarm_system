@@ -19,4 +19,4 @@ COPY ./*.py .
 COPY ./model ./model
 COPY ./static ./static
 
-CMD [ "./app.py" ]
+CMD [ "python3", "-u", "app.py" ]
