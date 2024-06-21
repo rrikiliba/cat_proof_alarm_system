@@ -30,14 +30,24 @@ The goal is to develop a system that enables users to utilize a motion-based sec
 │       └── style.css
 ├── [raspberry_pi_3_b]
 │   └── [mosquitto]
-└── [raspberry_pi_pico_w]
-    ├── [firmware]
-    ├── [lib]
-    └── main.py
+├── [raspberry_pi_pico_w]
+│   ├── [firmware]
+│   ├── [lib]
+│   └── main.py
+└── generate_secrets.sh
 ```
 ## How to run the project
 
-Each of the three boards require a different setup in order to run the designated code
+First of all, clone this repo in your desired workspace.
+After that place yourself inside the cloned directory and run the `generate_secrets.sh` script. This will create the necessary configuration files, with all the required variables that need to be set.
+These files can be found at the following paths:
+
+- raspberry_pi_pico_w/lib/secrets.py
+- esp32/lib/secrets.py
+- orange_pi_zero_2w/.env
+
+The necessary variables, their meaning and use can be all found in the generated files.
+As for the next steps, each of the three boards require a different setup in order to run the designated code, as explained below
 
 ### Raspberry pi pico w
 
