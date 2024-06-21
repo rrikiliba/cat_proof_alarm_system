@@ -46,7 +46,7 @@ These files can be found at the following paths:
 - esp32/lib/secrets.py
 - orange_pi_zero_2w/.env
 
-The necessary variables, their meaning and use can be all found in the generated files.
+The necessary variables, their meaning and use can be all found in the generated files. The script also generates an `authfile` in the `orange_pi_zero_2w` folder, where the ids of the authorized RFID cards are stored (Simply one id per row).
 As for the next steps, each of the three boards require a different setup in order to run the designated code, as explained below
 
 ### Raspberry pi pico w
