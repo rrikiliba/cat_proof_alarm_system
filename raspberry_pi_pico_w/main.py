@@ -15,7 +15,8 @@ class Alarm:
         self.peripherals = {
             'RFID': MFRC522(rst=15,sck=10,cs=13,miso=12,mosi=11,spi_id=1),
             'MOTION': Pin(14,Pin.IN,Pin.PULL_DOWN),
-            'BUZZER': Pin(0,Pin.OUT)
+            'BUZZER': Pin(0,Pin.OUT),
+            'LED': Pin('LED', Pin.OUT)
             }
         
         # set the device as unarmed
@@ -71,6 +72,7 @@ class Alarm:
     def rearm(self):
         self.peripherals['MOTION'].irq(trigger=Pin.IRQ_RISING, handler=self.motion_triggered)
         self.armed = True
+        self.peripherals['LED'].value(1)
         print('ARMED')
         self.peripherals['BUZZER'].value(1)
         utime.sleep_ms(600)
@@ -80,6 +82,7 @@ class Alarm:
     def disarm(self):
         self.peripherals['MOTION'].irq(handler=None)
         self.armed = False
+        self.peripherals['LED'].value(0)
         print('DISARMED')
         self.peripherals['BUZZER'].value(1)
         utime.sleep_ms(200)
@@ -97,7 +100,7 @@ class Alarm:
                 utime.sleep_ms(1000)
                 self.peripherals['BUZZER'].value(0)
                 utime.sleep_ms(500)
-            self.armed = False
+            self.disarm()
 
     # starts polling the RFID reader
     def poll_card(self):
@@ -122,7 +125,7 @@ class Alarm:
                         self.mqtt.publish(b'alarm/disarm', cfg.DEVICE_ID)
                         self.disarm()
 
-                    # otherwise, the card is invalid;
+                    # otherwise, the card is invalid
                     # give a small timeout and notify the user
                     else:
                         print('AUTH FAIL')

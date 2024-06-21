@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from threading import Thread
 from controller import Controller
 import os
@@ -26,7 +25,8 @@ Thread(target=Controller.start,
                'port': int(os.getenv('MQTT_PORT')),
                }).start()
 
-server_address = ('', 5000)
+port = int(os.getenv('HTTP_PORT'))
+server_address = ('', port)
 httpd = http.server.HTTPServer(server_address, Server)
-print(' * Server running on port 5000')
+print(f' * Server running on port {port}')
 httpd.serve_forever()

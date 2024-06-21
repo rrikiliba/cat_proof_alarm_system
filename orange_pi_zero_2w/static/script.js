@@ -14,10 +14,7 @@ fetch('https://api.ipify.org?format=json')
 function onConnect() {
     console.log("Connected to broker");
     document.getElementById('brokerStatus').textContent = "Broker status: Connected";
-    // client.subscribe('image/request')
     client.subscribe('image/submit')
-    // client.subscribe('device/online')
-    // client.subscribe('device/offline')
     client.subscribe('alarm/disarm')
     client.subscribe('alarm/sound')
     client.subscribe('alarm/rearm')
@@ -42,24 +39,14 @@ function onMessageArrived(message) {
         isArmed = false;
         setButtonState();
     }
-    if(message.destinationName === "image/submit") {
-        document.getElementById('image').src = "data:image/jpeg;base64," + message.payloadString;
+    else if(message.destinationName === "image/submit") {
+        const image = document.createElement('image');
+        const bytes = new Blob(message.payloadBytes);
+        image.src = URL.createObjectURL(bytes);
+        document.getElementById('imageConteiner').appendChild(image);
         onImageRecived();
     }
-    // if(message.destinationName === "device/online") {
-    //     document.getElementById('setAlarm').disabled = false;
-    //     document.getElementById('alarmStatus').textContent = "Broker status: Connected";
-    // }
-    // if(message.destinationName === "device/offline") {
-    //     document.getElementById('setAlarm').disabled = true;
-    //     document.getElementById('alarmStatus').textContent = "Alarm status: Disconnected";
-    // }
-    // if(message.destinationName === "alarm/defuse") {
-    //     document.getElementById('setAlarm').disabled = false;
-    //     isArmed = false;
-    //     setButtonState();
-    // }
-    if(message.destinationName === "alarm/rearm") {
+    else if(message.destinationName === "alarm/rearm") {
         document.getElementById('setAlarm').disabled = false;
         isArmed = true;
         setButtonState();
@@ -93,7 +80,8 @@ document.getElementById('brokerForm').addEventListener('submit', function(e) {
             onFailure: function (error) {
                 console.log("Connection failed: ", error.errorMessage);
             },
-            password: brokerPassword
+            //userName: "sinan",
+            //password: brokerPassword
         });
     } catch (error) {
         console.error("Failed to connect to broker: ", error);

@@ -39,7 +39,6 @@ class Controller:
         # subscribe to topics on connect
         # so that subscriptions don't get lost in case of reconnection
         def on_connect(client, userdata, flags, reason_code, properties):
-            print(' * MQTT client connected')
             client.subscribe('image/submit')
             client.subscribe('image/request')
             client.subscribe('device/online')
@@ -91,7 +90,7 @@ class Controller:
                         
                         # send the list of authorized keys to the new device
                         for id in controller.authorized:
-                            controller.mqtt.publish(f'device/ack/{msg.payload}', payload=f'{id}', qos=1)
+                            controller.mqtt.publish(f'device/ack/{msg.payload}', payload=f'{id.to_bytes(4, byteorder="little")}', qos=1)
 
                         # attempt to rearm the new device                    
                         if controller.armed:
