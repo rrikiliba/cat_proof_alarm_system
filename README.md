@@ -42,11 +42,18 @@ First of all, clone this repo in your desired workspace.
 After that place yourself inside the cloned directory and run the `generate_secrets.sh` script. This will create the necessary configuration files, with all the required variables that need to be set.
 These files can be found at the following paths:
 
-- raspberry_pi_pico_w/lib/secrets.py
-- esp32/lib/secrets.py
-- orange_pi_zero_2w/.env
+1. raspberry_pi_pico_w/lib/secrets.py
+2. esp32/lib/secrets.py
+3. orange_pi_zero_2w/.env
+4. orange_pi_zero_2w/.authfile
+5. orange_pi_zero_2w/mosquitto/passwd
 
-The necessary variables, their meaning and use can be all found in the generated files. The script also generates an `authfile` in the `orange_pi_zero_2w` folder, where the ids of the authorized RFID cards are stored (Simply one id per row).
+For 1-3, the necessary variables, their meaning and use can be all found in the generated files themselves. 
+
+`.authfile` contains the ids of the RFID devices that are authorized to defuse the system, simply written one per line.
+
+`passwd` contains the `username:password` pair for the MQTT users
+
 As for the next steps, each of the three boards require a different setup in order to run the designated code, as explained below
 
 ### Raspberry pi pico w

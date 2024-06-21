@@ -61,5 +61,8 @@ dmypy.json
 */*/secrets.py
 */secrets.py
 *.db
-mosquitto
+*.log
+passwd
 .authfile
+*.png
+*.jpeg

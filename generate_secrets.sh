@@ -34,3 +34,4 @@ echo -e "# Uses the docker network feature for automatic dns resolution, you don
         HTTP_HOST=cat_proof_alarm\n
         HTTP_PORT=" > orange_pi_zero_2w/.env
 touch orange_pi_zero_2w/.authfile
+echo "" > orange_pi_zero_2w/mosquitto/passwd
