@@ -63,5 +63,3 @@ dmypy.json
 *.db
 mosquitto
 .authfile
-
-image.png

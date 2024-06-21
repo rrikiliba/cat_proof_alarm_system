@@ -93,8 +93,7 @@ document.getElementById('brokerForm').addEventListener('submit', function(e) {
             onFailure: function (error) {
                 console.log("Connection failed: ", error.errorMessage);
             },
-            //userName: "sinan",
-            //password: brokerPassword
+            password: brokerPassword
         });
     } catch (error) {
         console.error("Failed to connect to broker: ", error);

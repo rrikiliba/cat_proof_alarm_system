@@ -37,6 +37,8 @@ The goal is to develop a system that enables users to utilize a motion-based sec
 
 ## User guide
 
+To use the alarm the user needs to authenticate using the form present in the webpage, then he can connects to its alarm system. 
+
 # Links
 
 # Team members
