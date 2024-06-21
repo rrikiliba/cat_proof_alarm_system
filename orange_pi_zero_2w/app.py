@@ -10,11 +10,14 @@ class Server(http.server.SimpleHTTPRequestHandler):
         if self.path == '/script.js' or self.path == '/style.css':
             self.path = f'static{self.path}'
             return http.server.SimpleHTTPRequestHandler.do_GET(self)
+        elif self.path == '/favicon.ico':
+            self.path = 'static/icon.png'
+            return http.server.SimpleHTTPRequestHandler.do_GET(self)
         elif self.path == '/':
             self.path = 'static/index.html'
             return http.server.SimpleHTTPRequestHandler.do_GET(self)
         else:
-            self.send_error(404, "Not on this server, sorry!")
+            self.send_error(404, f"{self.path} is not on this server, sorry!")
     
 load_dotenv()
 

@@ -64,5 +64,4 @@ dmypy.json
 *.log
 passwd
 .authfile
-*.png
 *.jpeg

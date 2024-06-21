@@ -1,5 +1,7 @@
 # Cat Proof Alarm System - Embedded software for the internet of things
 
+![logo](orange_pi_zero_2w/static/icon.png)
+
 ## Introduction
 
 This project, developed by two students of the University of Trento, aims to create a comprehensive home security system.
