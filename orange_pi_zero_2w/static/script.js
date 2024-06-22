@@ -3,6 +3,8 @@ var isArmed = false;
 
 const hostname = window.location.hostname;
 
+console.log("Hostname: " + hostname);
+
 function onConnect() {
     console.log("Connected to broker");
     document.getElementById('brokerStatus').textContent = "Broker status: Connected";
@@ -72,6 +74,7 @@ document.getElementById('brokerForm').addEventListener('submit', function(e) {
             onFailure: function (error) {
                 console.log("Connection failed: ", error.errorMessage);
             },
+            userName: "admin",
             password: brokerPassword
         });
     } catch (error) {
@@ -84,7 +87,7 @@ document.getElementById('setAlarm').addEventListener('click', function() {
     if(!isArmed) {
         if (client && client.isConnected()) {
             var message = new Paho.MQTT.Message("armed");
-            message.destinationName = "alarm/arm";
+            message.destinationName = "alarm/rearm";
             client.send(message);
             console.log("Message sent: armed");
             isArmed = true;
