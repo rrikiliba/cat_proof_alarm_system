@@ -1,15 +1,7 @@
 var client;
 var isArmed = false;
-let ipAddress;
 
-//
-fetch('https://api.ipify.org?format=json')
-    .then(response => response.json())
-    .then(data => {
-        ipAddress = data.ip;
-        console.log(ipAddress);
-    })
-    .catch(error => console.error('Error:', error));
+const hostname = window.location.hostname;
 
 function onConnect() {
     console.log("Connected to broker");
@@ -72,7 +64,7 @@ document.getElementById('brokerForm').addEventListener('submit', function(e) {
     var brokerPassword = document.getElementById('brokerPassword').value;
 
     try {
-        client = new Paho.MQTT.Client(ipAddress, Number(1883), "webPage");
+        client = new Paho.MQTT.Client(hostname, Number(1883), "webPage");
         client.onConnectionLost = onConnectionLost;
         client.onMessageArrived = onMessageArrived;
         client.connect({
@@ -80,8 +72,7 @@ document.getElementById('brokerForm').addEventListener('submit', function(e) {
             onFailure: function (error) {
                 console.log("Connection failed: ", error.errorMessage);
             },
-            //userName: "sinan",
-            //password: brokerPassword
+            password: brokerPassword
         });
     } catch (error) {
         console.error("Failed to connect to broker: ", error);
