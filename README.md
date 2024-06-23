@@ -1,11 +1,11 @@
-# Cat Proof Alarm System - Embedded software for the internet of things
+# Cat Proof Alarm System
 
 ![logo](orange_pi_zero_2w/static/icon.png)
 
 ## Introduction
 
 This project, developed by two students of the University of Trento, aims to create a comprehensive home security system.
-The goal is to develop a system that enables users to utilize a motion-based security system within their homes, even in the presence of pets that might trigger the alarm. Our solution allows users to receive alerts upon motion detection, enabling them to view a captured image of the movement and decide whether to activate the alarm.
+The goal is to develop a system that enables users to utilize a motion-based alarm within their homes, even in the presence of pets that might trigger it. Our solution allows users to receive alerts on a webapp upon motion detection, enabling them to view a captured image of the movement and decide whether to activate the alarm. If the user is not there to decide, fear not, the system will also automatically try to detect pesky pets in the image and, if it's successful, it will not sound the alarm.
 
 ## Requirements
 ### Hardware
@@ -101,7 +101,11 @@ As for the next steps, each of the three boards require a different setup in ord
 
 ## User guide
 
-To use the alarm, the user needs to connect to the webapp and authenticate using the form, then they can connect to its alarm system to rearm and disarm it, as well as see the real time feed of pictures as they are taken.
+First, the user needs to setup the project as detailed above, then place the three powered up devices in the same WAN. The camera device should point towards the area covered by the motion detection device, which in turn should be placed near any entry point, such as a door or a window. The controller device can be placed anywhere.
+
+In a real life scenario, more than one pair of camera and motion detector can be connected to the same controller device, to setup a more expanded and comprehensive alarm system.
+
+Then, to use the alarm, the user needs to connect to the webapp and authenticate using the form, then they can connect to its alarm system to rearm and disarm it, as well as see the real time feed of pictures as they are taken.
 
 ## Links
 
@@ -112,9 +116,9 @@ To use the alarm, the user needs to connect to the webapp and authenticate using
 
 Riccardo Libanora:
 
-- Raspberry pi pico w electronics and code development
+- Raspberry pi pico w electronics wiring and code development
 - Esp32 code development
-- Orange pi zero 2w electronics and code development
+- Orange pi zero 2w code development
 - Mqtt broker and topics, network setup
 - "How to run the project" section of documentation
 
