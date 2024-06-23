@@ -1,5 +1,8 @@
 services:
   mosquitto:
+    profiles:
+      - debug
+      - release
     image: eclipse-mosquitto:latest
     networks:
       - alarm_network
@@ -14,11 +17,37 @@ services:
       - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
       - ./mosquitto/data:/mosquitto/data
       - ./mosquitto/log:/mosquitto/log
-  controller:
+  controller_pc:
+    profiles:
+      - debug
     build: .
     networks:
       - alarm_network
     hostname: alarm_server
+    depends_on:
+      - mosquitto
+    container_name: alarm_controller
+    restart: unless-stopped
+    stop_grace_period: 1.5s
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./images:/alarm/images
+      - ./.authfile:/alarm/.authfile
+    env_file:
+      - path: .env
+        required: true
+  controller_soc:
+    profiles:
+      - release
+    build: .
+    networks:
+      - alarm_network
+    hostname: alarm_server
+    devices:  
+      - /dev/i2c-1:/dev/i2c-1
+    depends_on:
+      - mosquitto
     container_name: alarm_controller
     restart: unless-stopped
     stop_grace_period: 1.5s

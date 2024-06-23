@@ -40,6 +40,10 @@ The goal is to develop a system that enables users to utilize a motion-based sec
 ```
 ## How to run the project
 
+### Hardware setup
+
+### Software setup
+
 First of all, clone this repo in your desired workspace.
 After that place yourself inside the cloned directory and run the `generate_secrets.sh` script. This will create the necessary configuration files, with all the required variables that need to be set.
 These files can be found at the following paths:
@@ -58,7 +62,7 @@ For 1-3, the necessary variables, their meaning and use can be all found in the 
 
 As for the next steps, each of the three boards require a different setup in order to run the designated code, as explained below
 
-### Raspberry pi pico w
+#### Raspberry pi pico w
 
 1. Connect the board via USB while holding the BOOTSEL button; your PC will recognize it as a generic mounted storage
 1. Drag and drop the file provided in the [firmware folder](raspberry_pi_pico_w/firmware) inside the mounted storage
@@ -66,7 +70,7 @@ As for the next steps, each of the three boards require a different setup in ord
 1. Using either the Thonny IDE or the rshell CLI as detailed in the [official documentation](https://datasheets.raspberrypi.com/pico/raspberry-pi-pico-python-sdk.pdf), copy both `main.py` and the `lib` folder to the device
 1. All set! now you can either simply power on the device and check output via serial communication, or execute it inside Thonny
 
-### Esp32
+#### Esp32
 
 1. Install [esptool](https://docs.espressif.com/projects/esptool/en/latest/esp32/installation.html), a CLI utility to flash the ESP family of boards, by following the provided instructions
 1. Clear the flash by running the following:
@@ -79,7 +83,7 @@ As for the next steps, each of the three boards require a different setup in ord
 1. Using either the Thonny IDE or the rshell CLI as above, copy both `main.py` and the `lib` folder to the device
 1. All set! now you can either simply power on the device and check output via serial communication, or execute it inside Thonny
 
-### Orange pi zero 2w
+#### Orange pi zero 2w
 
 1. Download any compatible OS image. There exist an [Armbian](https://www.armbian.com/orange-pi-zero-2w/#) image, a [Dietpi](https://dietpi.com/#downloadinfo) image and a number of officially supported [images](http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/service-and-support/Orange-Pi-Zero-2W.html) by the manufacturer itself. We used the official Debian Bookworm server [image](https://drive.google.com/drive/folders/1wjhR3YDvZzoBq7UiTYBgAUEWATIPNAjJ)
 1. Flash the image to a TF / micro sd card using any of the many available flashing tools, such as [Balena Etcher](https://etcher.balena.io/)
@@ -88,13 +92,16 @@ As for the next steps, each of the three boards require a different setup in ord
 1. Clone this repo from the device itself via `git clone`
 1. Place yourself inside the `orange_pi_zero_2w` folder and run
 
-	`docker compose up`
+	`docker compose --profile release up`
+
+	> Note: 
+	> To run the docker container on a PC, use the profile 'debug'
 
 1. Now the system is up and running!  
 
 ## User guide
 
-To use the alarm the user needs to authenticate using the form present in the webpage, then he can connects to its alarm system. 
+To use the alarm, the user needs to connect to the webapp and authenticate using the form, then they can connect to its alarm system to rearm and disarm it, as well as see the real time feed of pictures as they are taken.
 
 ## Links
 
@@ -105,9 +112,9 @@ To use the alarm the user needs to authenticate using the form present in the we
 
 Riccardo Libanora:
 
-- Raspberry pi pico w code development
+- Raspberry pi pico w electronics and code development
 - Esp32 code development
-- Orange pi zero 2w code development
+- Orange pi zero 2w electronics and code development
 - Mqtt broker and topics, network setup
 - "How to run the project" section of documentation
 
@@ -115,5 +122,6 @@ Davide Zanolini:
 
 - Webapp graphic interface
 - Webapp interface to mqtt via websockets 
+- Orange pi zero 2w OLED integration
 - Documentation
 - Presentation
