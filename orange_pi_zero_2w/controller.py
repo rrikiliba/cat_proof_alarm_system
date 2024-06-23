@@ -5,6 +5,9 @@ from paho.mqtt import client as _
 from threading import Thread
 import time
 import datetime
+from oled.serial import i2c
+from oled.device import ssd1306
+from oled.render import canvas
 
 class Controller:
     def __init__(self):
@@ -70,18 +73,23 @@ class Controller:
     def start(user, password, host, port):
         print(' * Starting MQTT client')
         controller = Controller()
+        serial = i2c(port=1, address=0x3C)
+        screen = ssd1306(serial)
         #controller.mqtt.username_pw_set(user, password)
 
         # callback for mqtt message reception
         def on_message(client, userdata, msg):
             match msg.topic:
-
                 # in case a new device comes online
-                case 'device/online':
-                    
+                case 'device/online': 
+                    #set the screen text
+                    screen_text = "System is online ready to be armed"
+                    with canvas(screen) as draw:
+                        draw.rectangle(screen.bounding_box, outline="white", fill="black")
+                        draw.text((30, 40), screen_text, fill="white")                 
                     # save it to the online devices
                     controller.devices.add(str(msg.payload))
-                    
+        
                     # log the  event
                     print(f'DEVICE ONLINE: {msg.payload}')
 
@@ -103,7 +111,11 @@ class Controller:
 
                 # in case a device goes offline
                 case 'device/offline':
-
+                    #set the screen text
+                    screen_text = "System is offline"
+                    with canvas(screen) as draw:
+                        draw.rectangle(screen.bounding_box, outline="white", fill="black")
+                        draw.text((30, 40), screen_text, fill="white")
                     # log the event
                     print(f'DEVICE OFFLINE: {msg.payload}')
 
@@ -119,11 +131,19 @@ class Controller:
                         # or the user has time to disarm manually
                         def timer_callback(device=None):
                             for i in range(20):
+                                screen_text = f"Time left: {i}"
+                                with canvas(screen) as draw:
+                                    draw.rectangle(screen.bounding_box, outline="white", fill="black")
+                                    draw.text((30, 40), screen_text, fill="white")
                                 time.sleep(1)
                             if controller.triggered:
                                 controller.devices.discard(device)
                                 controller.mqtt.publish('alarm/sound', payload=None, qos=1)
                                 print('ALARM SOUND')
+                                screen_text =  "Alarm triggered!!"
+                                with canvas(screen) as draw:
+                                    draw.rectangle(screen.bounding_box, outline="white", fill="black")
+                                    draw.text((30, 40), screen_text, fill="white")
                         timer = Thread(target=timer_callback, kwargs={'device': str(msg.payload)})
                         timer.start()
                     else:
@@ -158,20 +178,38 @@ class Controller:
                     controller.triggered = True
                     def timer_callback(device=None):
                         for i in range(20):
+                            screen_text = f"Time left: {i}"
+                            with canvas(screen) as draw:
+                                draw.rectangle(screen.bounding_box, outline="white", fill="black")
+                                draw.text((30, 40), screen_text, fill="white")
                             time.sleep(1)
                         if controller.triggered:
                             controller.mqtt.publish('alarm/sound', payload=device, qos=1)
+                            screen_text =  "Alarm triggered!!"
+                            with canvas(screen) as draw:
+                                draw.rectangle(screen.bounding_box, outline="white", fill="black")
+                                draw.text((30, 40), screen_text, fill="white")
                     timer = Thread(target=timer_callback, kwargs={'device': str(msg.payload)})
                     timer.start()
 
                 # in case the alarm needs to be disarmed
                 case 'alarm/disarm':
+                    #set the screen text
+                    screen_text = "System is disarmed"
+                    with canvas(screen) as draw:
+                        draw.rectangle(screen.bounding_box, outline="white", fill="black")
+                        draw.text((30, 40), screen_text, fill="white")
                     print('Alarm disarmed')
                     controller.armed = False
                     controller.triggered = False
 
                 # in case the alarm needs to be rearmed
                 case 'alarm/rearm':
+                    #set the screen text
+                    screen_text = "System is armed"
+                    with canvas(screen) as draw:
+                        draw.rectangle(screen.bounding_box, outline="white", fill="black")
+                        draw.text((30, 40), screen_text, fill="white")
                     print('Alarm rearmed')
                     controller.armed = True
 
