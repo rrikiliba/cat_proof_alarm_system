@@ -2,10 +2,10 @@ from threading import Thread
 from controller import Controller
 from server import Server
 from os import getenv as env 
-from dotenv import load_dotenv
+from dotenv import load_dotenv as dotenv
 
-# load configuration
-load_dotenv()
+# load the variables contained in .env into the environment
+dotenv()
 
 # setup secondary thread
 controller_thread = Thread(target=Controller.start, 

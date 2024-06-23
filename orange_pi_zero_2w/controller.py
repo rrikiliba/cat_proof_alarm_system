@@ -8,15 +8,19 @@ import time
 import datetime
 
 class Controller:
+
+    # constructor
     def __init__(self):
         self.log('Loading YOLO model', start='*')
         # load the YOLOv8 pre-trained model
         self.yolo = YOLO("model/yolov8n.pt")
         # connect to mqtt
         self.mqtt = mqtt.client.Client(mqtt.client.CallbackAPIVersion.VERSION2, client_id='controller')
-        # during testing we used a cloud based broker that required TLS
+        
+        # during the first stages of testing, we used a cloud based broker that required TLS
         # self.mqtt.tls_set(tls_version=mqtt.client.ssl.PROTOCOL_TLS)
         
+        # attempt to initialize the ssd1306 OLED device that communicates via I²C
         try:
             serial = oled.serial.i2c()
             self.screen = oled.device.ssd1306(serial)
@@ -25,18 +29,22 @@ class Controller:
         self.log(f'Screen connected: {hasattr(self, "screen")}', start='*', oled=False)
 
         # set of currently connected devices
+        # they each add themselves here by sending a message to device/online with their ID
         self.devices = set()
 
         # set of RFID keys authorized to defeuse the alarm
         self.log('Loading authorized file', start='*')
         self.authorized = set()
+        # attempt to read all the entries in the file containing the keys' ids
         with open('.authfile') as file:
             count = 0
             for line in file:
                 try: 
+                    # each line contains exactly one entry
                     self.authorized.add(int(line.rstrip()))
                     count = count + 1
                 except:
+                    # signal possible errors (couldn't parse int)
                     self.log(f'Found malformed entry at line {count}', start='*')
             self.log(f'Loaded {count} entries', start='*')
 
@@ -75,11 +83,14 @@ class Controller:
         self.log('No cat or dog detected')
         return False
     
+    # custom logging function that will attempt to write the passed message both to stdout and to the OLED device, if present
     def log(self, msg, start='>', timestamp=None, use_timestamp=True, stdout=True, oled=True):
         if use_timestamp and timestamp is None:
             timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
         elif not use_timestamp and timestamp is not None:
             timestamp = None
+
+        # formatted message
         msg = f'{timestamp} {start} {msg}'
         if oled and hasattr(self, 'screen'):
             with oled.render.canvas(self.screen) as draw:
@@ -89,6 +100,7 @@ class Controller:
             print(msg) 
 
 
+    # constructs a Controller instance and loops forever
     def start(user, password, host, port):
         controller = Controller()
         controller.log('Starting MQTT client', start='*')
@@ -206,8 +218,8 @@ class Controller:
         controller.mqtt.loop_forever()
 
 if __name__ == '__main__':
-    from os import getenv
-    Controller.start(user=getenv('MQTT_USER'),
-                     password=getenv('MQTT_PASSWORD'),
-                     host=getenv('MQTT_HOST'),
-                     port= int(getenv('MQTT_PORT')),)
+    from os import getenv as env
+    Controller.start(user=env('MQTT_USER'),
+                     password=env('MQTT_PASSWORD'),
+                     host=env('MQTT_HOST'),
+                     port= int(env('MQTT_PORT')),)

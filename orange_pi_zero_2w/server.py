@@ -2,6 +2,8 @@ import http.server
 
 # wrapper for the python standard library web server implementation
 class Server(http.server.SimpleHTTPRequestHandler):
+
+    # constructor
     def __init__(self, host='', port=8080):
         server_address = (host, port)
         self.inner = http.server.HTTPServer(server_address, Server)
