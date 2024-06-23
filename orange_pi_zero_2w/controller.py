@@ -2,16 +2,14 @@
 from ultralytics import YOLO
 import paho.mqtt as mqtt
 from paho.mqtt import client as _
+import luma.oled as oled
 from threading import Thread
 import time
 import datetime
-from oled.serial import i2c
-from oled.device import ssd1306
-from oled.render import canvas
 
 class Controller:
     def __init__(self):
-        print(' * Loading YOLO model')
+        self.log('Loading YOLO model', start='*')
         # load the YOLOv8 pre-trained model
         self.yolo = YOLO("model/yolov8n.pt")
         # connect to mqtt
@@ -19,11 +17,18 @@ class Controller:
         # during testing we used a cloud based broker that required TLS
         # self.mqtt.tls_set(tls_version=mqtt.client.ssl.PROTOCOL_TLS)
         
+        try:
+            serial = oled.serial.i2c()
+            self.screen = oled.device.ssd1306(serial)
+        except:
+            pass
+        self.log(f'Screen connected: {hasattr(self, "screen")}', start='*', oled=False)
+
         # set of currently connected devices
         self.devices = set()
 
         # set of RFID keys authorized to defeuse the alarm
-        print(' * Loading authorized file')
+        self.log('Loading authorized file', start='*')
         self.authorized = set()
         with open('.authfile') as file:
             count = 0
@@ -32,8 +37,8 @@ class Controller:
                     self.authorized.add(int(line.rstrip()))
                     count = count + 1
                 except:
-                    print(f' * Found malformed entry at line {count}')
-            print(f' * Loaded {count} entries')
+                    self.log(f'Found malformed entry at line {count}', start='*')
+            self.log(f'Loaded {count} entries', start='*')
 
         # states for the controller
         self.triggered = False
@@ -64,34 +69,40 @@ class Controller:
             #     self.mqtt.publish('alarm/sound', payload=None, qos=1)
             #     return False
             if obj == 'cat' or obj == 'dog' and confidence > 0.75:
-                print(f'False alarm, it was a {obj}\t(I\'m {confidence*100}% sure)')
+                self.log(f'{obj} detected at {confidence*100}%, defused')
                 return True
     
-        print('No cat detected')
+        self.log('No cat or dog detected')
         return False
     
+    def log(self, msg, start='>', timestamp=None, use_timestamp=True, stdout=True, oled=True):
+        if use_timestamp and timestamp is None:
+            timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+        elif not use_timestamp and timestamp is not None:
+            timestamp = None
+        msg = f'{timestamp} {start} {msg}'
+        if oled and hasattr(self, 'screen'):
+            with oled.render.canvas(self.screen) as draw:
+                draw.rectangle(self.screen.bounding_box, outline="white", fill="black")
+                draw.text((30, 40), msg, fill="white")
+        if stdout:
+            print(msg) 
+
+
     def start(user, password, host, port):
-        print(' * Starting MQTT client')
         controller = Controller()
-        serial = i2c(port=1, address=0x3C)
-        screen = ssd1306(serial)
-        #controller.mqtt.username_pw_set(user, password)
+        controller.log('Starting MQTT client', start='*')
 
         # callback for mqtt message reception
         def on_message(client, userdata, msg):
             match msg.topic:
                 # in case a new device comes online
-                case 'device/online': 
-                    #set the screen text
-                    screen_text = "System is online ready to be armed"
-                    with canvas(screen) as draw:
-                        draw.rectangle(screen.bounding_box, outline="white", fill="black")
-                        draw.text((30, 40), screen_text, fill="white")                 
-                    # save it to the online devices
+                case 'device/online':              
+                    # save its id (sent in the msg payload) to the online devices
                     controller.devices.add(str(msg.payload))
         
                     # log the  event
-                    print(f'DEVICE ONLINE: {msg.payload}')
+                    controller.log(f'Device online: {msg.payload}')
 
                     # if the device is not in the list, it is newly connected
                     if msg.payload not in controller.devices:
@@ -111,13 +122,8 @@ class Controller:
 
                 # in case a device goes offline
                 case 'device/offline':
-                    #set the screen text
-                    screen_text = "System is offline"
-                    with canvas(screen) as draw:
-                        draw.rectangle(screen.bounding_box, outline="white", fill="black")
-                        draw.text((30, 40), screen_text, fill="white")
                     # log the event
-                    print(f'DEVICE OFFLINE: {msg.payload}')
+                    controller.log(f'Device offline: {msg.payload}')
 
                     # take action if the device is brought offline
                     # while the system is armed
@@ -130,93 +136,73 @@ class Controller:
                         # so that the device has time to reconnect
                         # or the user has time to disarm manually
                         def timer_callback(device=None):
-                            for i in range(20):
-                                screen_text = f"Time left: {i}"
-                                with canvas(screen) as draw:
-                                    draw.rectangle(screen.bounding_box, outline="white", fill="black")
-                                    draw.text((30, 40), screen_text, fill="white")
+                            for i in range(20, 0, -1):
+                                controller.log(f"Time left: {i}", stdout=False)
                                 time.sleep(1)
                             if controller.triggered:
                                 controller.devices.discard(device)
                                 controller.mqtt.publish('alarm/sound', payload=None, qos=1)
-                                print('ALARM SOUND')
-                                screen_text =  "Alarm triggered!!"
-                                with canvas(screen) as draw:
-                                    draw.rectangle(screen.bounding_box, outline="white", fill="black")
-                                    draw.text((30, 40), screen_text, fill="white")
+                                controller.log('Alarm sound!')
                         timer = Thread(target=timer_callback, kwargs={'device': str(msg.payload)})
                         timer.start()
                     else:
-                        controller.devices.remove(msg.payload)
+                        controller.devices.discard(msg.payload)
                         
                 # in case an image is submitted to for inference
                 case 'image/submit':
+                    timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
 
                     # log the event
-                    print('Image received')
+                    controller.log(f'Image received', timestamp=timestamp)
 
                     # save the image to file
-                    file_path = f'images/{datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")}.jpeg'
+                    file_path = f'images/{timestamp}.jpeg'
                     with open(file_path, 'wb') as file:
                         file.write(msg.payload)
 
                         # defuse the alarm if cat detected
                         if controller.detect_cat(file_path):
                             controller.triggered = False
-                        else :
-                            print('N')
                 
                 # in case an image is requested (which means a motion sensor was activated)
                 case 'image/request':
-
                     # log the event
-                    print('Image requested')
+                    controller.log(f'Image requested')
+
+                    # put the alarm in the 'triggered' state
+                    controller.triggered = True
 
                     # start a 20 second timer before sounding the alarm
                     # so that there is time to use the RFID to disarm the system
                     # and to perform inference to check if a cat is in the image
-                    controller.triggered = True
                     def timer_callback(device=None):
-                        for i in range(20):
-                            screen_text = f"Time left: {i}"
-                            with canvas(screen) as draw:
-                                draw.rectangle(screen.bounding_box, outline="white", fill="black")
-                                draw.text((30, 40), screen_text, fill="white")
+                        for i in range(20, 0, -1):
+                            controller.log(f"Time left: {i}", stdout=False)
                             time.sleep(1)
                         if controller.triggered:
-                            controller.mqtt.publish('alarm/sound', payload=device, qos=1)
-                            screen_text =  "Alarm triggered!!"
-                            with canvas(screen) as draw:
-                                draw.rectangle(screen.bounding_box, outline="white", fill="black")
-                                draw.text((30, 40), screen_text, fill="white")
+                            controller.devices.discard(device)
+                            controller.mqtt.publish('alarm/sound', payload=None, qos=1)
+                            controller.log('Alarm sound!')
                     timer = Thread(target=timer_callback, kwargs={'device': str(msg.payload)})
                     timer.start()
 
                 # in case the alarm needs to be disarmed
                 case 'alarm/disarm':
                     #set the screen text
-                    screen_text = "System is disarmed"
-                    with canvas(screen) as draw:
-                        draw.rectangle(screen.bounding_box, outline="white", fill="black")
-                        draw.text((30, 40), screen_text, fill="white")
-                    print('Alarm disarmed')
+                    controller.log("System is disarmed")
                     controller.armed = False
                     controller.triggered = False
 
                 # in case the alarm needs to be rearmed
                 case 'alarm/rearm':
                     #set the screen text
-                    screen_text = "System is armed"
-                    with canvas(screen) as draw:
-                        draw.rectangle(screen.bounding_box, outline="white", fill="black")
-                        draw.text((30, 40), screen_text, fill="white")
-                    print('Alarm rearmed')
+                    controller.log("System is armed")
                     controller.armed = True
 
         controller.mqtt.on_message = on_message
         controller.mqtt.connect(host, port, 60)
 
-        print(' * Now running')
+        controller.log('Controller running', start='*')
         controller.mqtt.loop_forever()
 
 if __name__ == '__main__':
