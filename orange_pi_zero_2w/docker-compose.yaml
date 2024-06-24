@@ -31,8 +31,8 @@ services:
     restart: unless-stopped
     stop_grace_period: 1.5s
     volumes:
-      - ./images:/alarm/images
-      - ./.authfile:/alarm/.authfile
+      - ./controller/images:/controller/images
+      - ./controller/.authfile:/controller/.authfile
     env_file:
       - path: .env
         required: true
@@ -52,8 +52,8 @@ services:
     restart: unless-stopped
     stop_grace_period: 1.5s
     volumes:
-      - ./images:/alarm/images
-      - ./.authfile:/alarm/.authfile
+      - ./controller/images:/controller/images
+      - ./controller/.authfile:/controller/.authfile
     env_file:
       - path: .env
         required: true
@@ -71,8 +71,7 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - ./images:/alarm/images
-      - ./.authfile:/alarm/.authfile
+      - ./server/static:/server/static
     env_file:
       - path: .env
         required: true
