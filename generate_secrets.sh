@@ -8,7 +8,10 @@ echo -e "# Name of your wifi network\n
         # IP address of the device hosting the MQTT broker\n
         MQTT_BROKER=b''\n
         # Port on which the MQTT broker is listening on (default: 1883)\n
-        MQTT_PORT=1883" > esp_32/lib/secrets.py
+        MQTT_PORT=1883\n
+        # Credentials\n
+        MQTT_USER=''\n
+        MQTT_PASSWORD=''" > esp_32/lib/secrets.py
 echo -e "# Name of your wifi network\n
         WIFI_SSID=''\n
         # Password for your network\n
@@ -23,15 +26,21 @@ echo -e "# Name of your wifi network\n
         # IP address of the device hosting the MQTT broker\n
         MQTT_BROKER=b''\n
         # Port on which the MQTT broker is listening on (default: 1883)\n
-        MQTT_PORT=1883" > esp_32/lib/secrets.py
+        MQTT_PORT=1883\n
+        # Credentials\n
+        MQTT_USER=''\n
+        MQTT_PASSWORD=''" > esp_32/lib/secrets.py
 echo -e "# Uses the docker network feature for automatic dns resolution, you don't need to change this\n
         MQTT_HOST=mosquitto\n
         # Port on which the MQTT broker is listening on (default: 1883)\n
         MQTT_PORT=1883\n
         # Keep alive value for the MQTT connection (default: 60)
         MQTT_KEEPALIVE=60\n
+        # Credentials for Mosquitto broker\n
+        MQTT_USER=\n
+        MQTT_PASSWORD=\n
         #uses docker network for automatic dns resolution, you don't need to change this\n
         HTTP_HOST=cat_proof_alarm\n
         HTTP_PORT=" > orange_pi_zero_2w/.env
 touch orange_pi_zero_2w/.authfile
-echo "" > orange_pi_zero_2w/mosquitto/passwd
+echo "admin:$7$101$NBZcAb+v3xOjrRoR$lub+0XOCLjlgXK76KguA9SnfveJ1AoXcriMKrwEtYqFUIEGsyZMOB3xqw1mGZ0vLHOhBgjhUNJpdfbv0Um4DVg==" > orange_pi_zero_2w/mosquitto/passwd
