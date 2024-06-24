@@ -65,7 +65,7 @@ function onImageRecived(){
     document.getElementById('callTheCops').style.display = 'block';
 }
 
-document.getElementById('brokerForm').addEventListener('submit', function(e) {
+document.getElementById('connect').addEventListener('submit', function(e) {
     e.preventDefault();
     var brokerPassword = document.getElementById('brokerPassword').value;
 
