@@ -1,5 +1,7 @@
 * {
-    margin: 10px;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
@@ -7,16 +9,51 @@ body {
     margin: 0;
     padding: 0;
     background-color: #f4f4f4;
-    padding: 0 0 0 30px; /* top right bottom left */
+    padding-left: 30px;
+}
+.button {
+    flex: 0.05;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.button.fixed-size {
+    width: 10px;
+}
+
+.button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.buttonContainer {
+    display: flex;
+    gap: 10px;
 }
 
 h1, h2, h3 {
     color: #333;
+    margin-bottom: 20px;
 }
 
 p {
     color: #666;
     line-height: 1.6em;
+}
+
+#brokerForm {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#brokerForm .button {
+    margin-top: 50px;
 }
 
 #setAlarm {
