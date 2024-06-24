@@ -6,10 +6,12 @@
     <p id="alarmStatus">Alarm status: Disconnected</p>
     <form id="brokerForm">
         <input type="password" id="brokerPassword" placeholder="Broker password"><br>
-        <input type="submit" value="Connect">
+        <div class="buttonContainer">
+            <button type="submit" id="connect" class="button">Connect</button>
+            <button type="button" id="arm" class="button">Arm</button>
+        </div>
     </form>
-    <button id="setAlarm">Arm</button>
-    <button id = "callTheCops">Click here to call the cops</button>
+    <button id="callTheCops">Click here to call the cops</button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
     <script src="script.js"></script>

@@ -70,7 +70,7 @@ document.getElementById('brokerForm').addEventListener('submit', function(e) {
     var brokerPassword = document.getElementById('brokerPassword').value;
 
     try {
-        client = new Paho.MQTT.Client(hostname, 9001, "webapp");
+        client = new Paho.MQTT.Client(hostname, Number(9001), "webapp");
         client.onConnectionLost = onConnectionLost;
         client.onMessageArrived = onMessageArrived;
         client.connect({
@@ -87,7 +87,7 @@ document.getElementById('brokerForm').addEventListener('submit', function(e) {
     }
 });
 
-document.getElementById('setAlarm').addEventListener('click', function() {
+document.getElementById('arm').addEventListener('click', function() {
     if(!isArmed) {
         if (client && client.isConnected()) {
             var message = new Paho.MQTT.Message("armed");
