@@ -20,17 +20,16 @@ services:
   controller_pc:
     profiles:
       - debug
-    build: .
+    build: ./controller/
     networks:
       - alarm_network
-    hostname: alarm_server
+    hostname: alarm_controller
     depends_on:
       - mosquitto
+      - server
     container_name: alarm_controller
     restart: unless-stopped
     stop_grace_period: 1.5s
-    ports:
-      - "5000:5000"
     volumes:
       - ./images:/alarm/images
       - ./.authfile:/alarm/.authfile
@@ -43,12 +42,30 @@ services:
     build: .
     networks:
       - alarm_network
-    hostname: alarm_server
+    hostname: alarm_controller
     devices:  
       - /dev/i2c-1:/dev/i2c-1
     depends_on:
       - mosquitto
+      - server
     container_name: alarm_controller
+    restart: unless-stopped
+    stop_grace_period: 1.5s
+    volumes:
+      - ./images:/alarm/images
+      - ./.authfile:/alarm/.authfile
+    env_file:
+      - path: .env
+        required: true
+  server:
+    profiles:
+      - debug
+      - release
+    build: ./server/
+    networks:
+      - alarm_network
+    hostname: alarm_server
+    container_name: alarm_server
     restart: unless-stopped
     stop_grace_period: 1.5s
     ports:

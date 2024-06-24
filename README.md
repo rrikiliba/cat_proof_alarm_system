@@ -1,6 +1,6 @@
 # Cat Proof Alarm System
 
-![logo](orange_pi_zero_2w/static/icon.png)
+![logo](orange_pi_zero_2w/server/static/icon.png)
 
 ## Introduction
 

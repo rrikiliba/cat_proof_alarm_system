@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from ultralytics import YOLO
 import paho.mqtt as mqtt
 from paho.mqtt import client as _

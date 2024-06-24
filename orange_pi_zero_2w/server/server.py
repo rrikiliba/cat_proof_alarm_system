@@ -28,3 +28,7 @@ class Server(http.server.SimpleHTTPRequestHandler):
     def start(host='', port=8080):
         server = Server.with_params(host=host, port=port)
         server.serve_forever()
+
+if __name__ == '__main__':
+    from os import getenv as env 
+    Server.start(port=int(env("HTTP_PORT")))

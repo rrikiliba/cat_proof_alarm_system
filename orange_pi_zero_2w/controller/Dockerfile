@@ -15,8 +15,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install\
 RUN pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cpu
 RUN pip3 install -r requirements.txt
 
-COPY ./*.py .
+COPY ./controller.py ./main.py
 COPY ./model ./model
-COPY ./static ./static
 
-CMD [ "python3", "-u", "app.py" ]
+CMD [ "python3", "-u", "main.py" ]
