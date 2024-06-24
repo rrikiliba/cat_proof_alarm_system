@@ -70,7 +70,7 @@ document.getElementById('brokerForm').addEventListener('submit', function(e) {
     var brokerPassword = document.getElementById('brokerPassword').value;
 
     try {
-        client = new Paho.MQTT.Client(hostname, Number(1883), "webPage");
+        client = new Paho.MQTT.Client(hostname, Number(9001), "webapp");
         client.onConnectionLost = onConnectionLost;
         client.onMessageArrived = onMessageArrived;
         client.connect({
