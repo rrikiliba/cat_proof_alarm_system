@@ -4,9 +4,9 @@ import http.server
 class Server(http.server.SimpleHTTPRequestHandler):
 
     # constructor
-    def __init__(self, host='', port=8080):
+    def with_params(host, port):
         server_address = (host, port)
-        self.inner = http.server.HTTPServer(server_address, Server)
+        return http.server.HTTPServer(server_address, Server)
 
     # defines existing routes
     def do_GET(self):
@@ -26,5 +26,5 @@ class Server(http.server.SimpleHTTPRequestHandler):
         self.inner.serve_forever()
 
     def start(host='', port=8080):
-        server = Server(host, port)
+        server = Server.with_params(host=host, port=port)
         server.serve_forever()

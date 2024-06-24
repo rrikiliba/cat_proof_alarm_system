@@ -3,18 +3,14 @@ var isArmed = false;
 
 const hostname = window.location.hostname;
 
-console.log("Hostname: " + hostname);
-
 function onConnect() {
-    console.log("Connected to broker");
-    document.getElementById('brokerStatus').textContent = "Broker status: Connected";
+    client.subscribe('device/ack/webapp')
     client.subscribe('image/submit')
     client.subscribe('alarm/disarm')
     client.subscribe('alarm/sound')
     client.subscribe('alarm/rearm')
-
-    isArmed = true;
-    setButtonState();
+    console.log("Connected to broker");
+    document.getElementById('brokerStatus').textContent = "Broker status: Connected";
 }
 
 function onConnectionLost(responseObject) {
@@ -45,6 +41,14 @@ function onMessageArrived(message) {
         isArmed = true;
         setButtonState();
     }
+    else if(message.destinationName === "device/ack/webapp") {
+        if (message.payloadString === '0') {
+            isArmed = false;
+        } else {
+            isArmed = true;
+        }
+        setButtonState();
+    }
 }
 
 function setButtonState() {
@@ -66,7 +70,7 @@ document.getElementById('brokerForm').addEventListener('submit', function(e) {
     var brokerPassword = document.getElementById('brokerPassword').value;
 
     try {
-        client = new Paho.MQTT.Client(hostname, Number(1883), "webPage");
+        client = new Paho.MQTT.Client(hostname, 9001, "webapp");
         client.onConnectionLost = onConnectionLost;
         client.onMessageArrived = onMessageArrived;
         client.connect({

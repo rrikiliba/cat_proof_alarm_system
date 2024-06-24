@@ -109,28 +109,32 @@ class Controller:
         def on_message(client, userdata, msg):
             match msg.topic:
                 # in case a new device comes online
-                case 'device/online':              
-                    # save its id (sent in the msg payload) to the online devices
-                    controller.devices.add(str(msg.payload))
-        
-                    # log the  event
-                    controller.log(f'Device online: {msg.payload}')
+                case 'device/online':
+                    if msg.payload == b'webapp':
+                        controller.mqtt.publish(f'device/ack/{msg.payload}', payload='1' if controller.armed else '0', qos=1)
+                    else: 
 
-                    # if the device is not in the list, it is newly connected
-                    if msg.payload not in controller.devices:
+                        # save its id (sent in the msg payload) to the online devices
+                        controller.devices.add(str(msg.payload))
+            
+                        # log the  event
+                        controller.log(f'Device online: {msg.payload}')
+
+                        # if the device is not in the list, it is newly connected
+                        if msg.payload not in controller.devices:
+                            
+                            # send the list of authorized keys to the new device
+                            for id in controller.authorized:
+                                controller.mqtt.publish(f'device/ack/{msg.payload}', payload=f'{id.to_bytes(4, byteorder="little")}', qos=1)
+
+                            # attempt to rearm the new device                    
+                            if controller.armed:
+                                controller.mqtt.publish(f'alarm/rearm/{msg.payload}', None, qos=1)
                         
-                        # send the list of authorized keys to the new device
-                        for id in controller.authorized:
-                            controller.mqtt.publish(f'device/ack/{msg.payload}', payload=f'{id.to_bytes(4, byteorder="little")}', qos=1)
-
-                        # attempt to rearm the new device                    
-                        if controller.armed:
-                            controller.mqtt.publish(f'alarm/rearm/{msg.payload}', None, qos=1)
-                    
-                    # if the device was already in the list, it was disconnected abruptly,
-                    # but it has now reconnected, so defuse the alarm internally
-                    else:
-                        controller.triggered = False
+                        # if the device was already in the list, it was disconnected abruptly,
+                        # but it has now reconnected, so defuse the alarm internally
+                        else:
+                            controller.triggered = False
 
                 # in case a device goes offline
                 case 'device/offline':
@@ -212,6 +216,7 @@ class Controller:
                     controller.armed = True
 
         controller.mqtt.on_message = on_message
+        controller.mqtt.username_pw_set(username=user, password=password)
         controller.mqtt.connect(host, port, 60)
 
         controller.log('Controller running', start='*')
@@ -222,4 +227,5 @@ if __name__ == '__main__':
     Controller.start(user=env('MQTT_USER'),
                      password=env('MQTT_PASSWORD'),
                      host=env('MQTT_HOST'),
-                     port= int(env('MQTT_PORT')),)
+                     port= int(env('MQTT_PORT')),
+                    )
