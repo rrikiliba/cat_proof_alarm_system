@@ -28,7 +28,7 @@ The goal is to develop a system that enables users to utilize a motion-based ala
 ```
 [cat_proof_alarm_system]
 ├── [documentation]
-├── [esp_32]							# Controls the camera
+├── [esp_32]		# Controls the camera
 │   ├── [firmware]
 │   ├── [lib]
 │   └── main.py
