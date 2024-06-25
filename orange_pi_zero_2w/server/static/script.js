@@ -10,15 +10,14 @@ function onConnect() {
     client.subscribe('alarm/sound')
     client.subscribe('alarm/rearm')
     console.log("Connected to broker");
-    document.getElementById('brokerStatus').textContent = "Broker status: Connected";
+    updateStatus('brokerStatus', true);
 }
 
 function onConnectionLost(responseObject) {
     if (responseObject.errorCode !== 0) {
         console.log("Connection lost: " + responseObject.errorMessage);
     }
-    document.getElementById('setAlarm').disabled = true;
-    // Mostra un pop-up di errore
+    updateStatus('brokerStatus', false);
     alert("Connection lost!");
 }
 
@@ -27,6 +26,7 @@ function onMessageArrived(message) {
     if (message.destinationName === "alarm/disarm") {
         console.log("Alarm state: " + message.payloadString);
         isArmed = false;
+        updateStatus('alarmStatus', false);
         setButtonState();
     }
     else if(message.destinationName === "image/submit") {
@@ -113,3 +113,35 @@ document.getElementById('arm').addEventListener('click', function() {
     }
     setButtonState();
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+    updateStatus('brokerStatus', false);
+    updateStatus('alarmStatus', false);
+});
+
+function updateStatus(elementId, isConnected) {
+    const element = document.getElementById(elementId);
+    if (isConnected) {
+        element.classList.add('connected');
+        element.classList.remove('disconnected');
+        element.textContent = `${elementId.replace('Status', ' status')}: Connected`;
+    } else {
+        element.classList.add('disconnected');
+        element.classList.remove('connected');
+        element.textContent = `${elementId.replace('Status', ' status')}: Disconnected`;
+    }
+}
+
+function checkSystemStatus() {
+    const brokerConnected = document.getElementById('brokerStatus').classList.contains('connected');
+    const alarmConnected = document.getElementById('alarmStatus').classList.contains('connected');
+    const systemStatus = document.getElementById('systemStatus');
+
+    if (brokerConnected && alarmConnected) {
+        systemStatus.textContent = "Allarme funzionante";
+        systemStatus.classList.add('status-box', 'connected');
+    } else {
+        systemStatus.textContent = "";
+        systemStatus.classList.remove('connected');
+    }
+}
