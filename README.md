@@ -9,19 +9,19 @@ The goal is to develop a system that enables users to utilize a motion-based ala
 
 ## Requirements
 ### Hardware
-* Orange Pi Zero 2W
-	* Display
 * Raspberry Pi Pico W
 	* RC522 RFID reader
 	* IR movement sensor
 * ESP32
 	* OV2640 CAM
 	* USB programming module
+* Orange Pi Zero 2W (optional)
+	* SSD1306 OLED display (optional)
 ### Software
-* esptool
-* balena
-* docker 
-* thonny
+* [esptool](https://github.com/espressif/esptool)
+* [balena etcher](https://github.com/balena-io/etcher) or similar 
+* [docker](https://github.com/microsoft/docker)
+* [thonny](https://github.com/thonny/thonny) or [rshell](https://github.com/dhylands/rshell)
 
 
 ## Project layout
@@ -84,7 +84,7 @@ For 1-3, the necessary variables, their meaning and use can be all found in the 
 
 `.authfile` contains the ids of the RFID devices that are authorized to defuse the system, simply written one per line.
 
-`passwd` contains the `username:password` pair for the MQTT users
+`passwd` contains the `username:password` pair for the MQTT users; includes the default ones.
 
 As for the next steps, each of the three boards require a different setup in order to run the designated code, as explained below
 
