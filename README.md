@@ -20,10 +20,10 @@ The goal is to develop a system that enables users to utilize a motion-based ala
 	* OV2640 CAM
 	* USB programming module
 ### Software
-* **Python**
-* **JavaScript**
-* **Docker**
-* **Mosquitto**
+* esptool
+* balena
+* docker 
+* thonny
 
 
 ## Project layout
