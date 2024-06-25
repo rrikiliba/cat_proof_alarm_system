@@ -28,11 +28,11 @@ The goal is to develop a system that enables users to utilize a motion-based ala
 ```
 [cat_proof_alarm_system]
 ├── [documentation]
-├── [esp_32]								# Controls the camera
+├── [esp_32]							# Controls the camera
 │   ├── [firmware]
 │   ├── [lib]
 │   └── main.py
-├── [orange_pi_zero_2w]					    # Runs the server for the broker and the controller, controls the display 
+├── [orange_pi_zero_2w]					# Runs the server for the broker and the controller, controls the display 
 │   ├── docker-compose.yaml
 │   ├── [controller]
 │   │	 ├── controller.py
@@ -49,7 +49,7 @@ The goal is to develop a system that enables users to utilize a motion-based ala
 │           ├── index.html
 │           ├── script.js
 │           └── style.css
-├── [raspberry_pi_pico_w]				    # Controls the NFC reader, the motion sensor and the buzzer
+├── [raspberry_pi_pico_w]				# Controls the NFC reader, the motion sensor and the buzzer
 │   ├── [firmware]
 │   ├── [lib]
 │   │	├── [umqtt]
