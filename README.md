@@ -9,7 +9,22 @@ The goal is to develop a system that enables users to utilize a motion-based ala
 
 ## Requirements
 ### Hardware
+* Orange Pi Zero 2W
+	* Display
+* Raspberry Pi Pico W
+	* RC522 RFID reader
+	* IR movement sensor
+	* Buzzer
+	* LED
+* ESP32
+	* OV2640 CAM
+	* USB programming module
 ### Software
+* **Python**
+* **JavaScript**
+* **Docker**
+* **Mosquitto**
+
 
 ## Project layout
 ```
