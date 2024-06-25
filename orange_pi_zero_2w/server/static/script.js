@@ -130,6 +130,7 @@ function updateStatus(elementId, isConnected) {
         element.classList.remove('connected');
         element.textContent = `${elementId.replace('Status', ' status')}: Disconnected`;
     }
+    checkSystemStatus();
 }
 
 function checkSystemStatus() {
@@ -138,8 +139,10 @@ function checkSystemStatus() {
     const systemStatus = document.getElementById('systemStatus');
 
     if (brokerConnected && alarmConnected) {
-        systemStatus.textContent = "Allarme funzionante";
+        systemStatus.textContent = "The alarm is on";
         systemStatus.classList.add('status-box', 'connected');
+        document.getElementById('brokerStatus').style.display = 'none';
+        document.getElementById('alarmStatus').style.display = 'none';
     } else {
         systemStatus.textContent = "";
         systemStatus.classList.remove('connected');
