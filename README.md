@@ -20,28 +20,28 @@ The goal is to develop a system that enables users to utilize a motion-based ala
 │   ├── [lib]
 │   └── main.py
 ├── [orange_pi_zero_2w]
-│	 ├── docker-compose.yaml
+│   ├── docker-compose.yaml
 │   ├── [controller]
 │   │	 ├── controller.py
 │   │	 ├── Dockerfile
 │   │	 ├── [images]
 │   │	 └── [model]
-│   │		 └── yolov8n.pt
+│   │        └── yolov8n.pt
 │   ├── [mosquitto]
 │   └── [server]
-│   	 ├── server.py
-│   	 ├── Dockerfile
-│  	 └── [static]
-│       	 ├── icon.png
-│       	 ├── index.html
-│       	 ├── script.js
-│       	 └── style.css
+│   	├── server.py
+│   	├── Dockerfile
+│  	└── [static]
+│      	    ├── icon.png
+│           ├── index.html
+│           ├── script.js
+│           └── style.css
 ├── [raspberry_pi_pico_w]
 │   ├── [firmware]
 │   ├── [lib]
-│   │	 ├── [umqtt]
-│	 │	 │	 └── simple.py
-│	 │	 └── mfrc522.py
+│   │	├── [umqtt]
+│   │	│   └── simple.py
+│   │	└── mfrc522.py
 │   └── main.py
 └── generate_secrets.sh
 ```
