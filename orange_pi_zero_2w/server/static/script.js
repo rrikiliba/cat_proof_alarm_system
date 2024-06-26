@@ -81,6 +81,7 @@ document.getElementById('brokerForm').addEventListener('submit', function(e) {
         };
         client.connect({
             onSuccess: function() {
+                onConnect();
                 console.log("Connected successfully");
             },
             onFailure: function (error) {
