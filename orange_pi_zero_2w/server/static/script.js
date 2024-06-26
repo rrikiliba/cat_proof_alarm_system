@@ -1,8 +1,6 @@
 var client;
 var isArmed = false;
 
-const hostname = window.location.hostname;
-
 function onConnect() {
     client.subscribe('device/ack/webapp')
     client.subscribe('image/submit')
@@ -74,7 +72,7 @@ document.getElementById('brokerForm').addEventListener('submit', function(e) {
     e.preventDefault();    
     var brokerPassword = document.getElementById('brokerPassword').value;
     try {
-        var client = new Paho.MQTT.Client(hostname, Number(9001), "webapp");
+        var client = new Paho.MQTT.Client(window.location.hostname, Number(9001), "webapp");
         client.onConnectionLost = function(responseObject) {
             console.log("Connection lost: ", responseObject.errorMessage);
         };
