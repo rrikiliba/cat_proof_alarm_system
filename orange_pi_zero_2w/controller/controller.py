@@ -114,10 +114,10 @@ class Controller:
                 case 'device/online':
                             
                     # log the  event
-                    controller.log(f'Device online: {msg.payload}')
+                    controller.log(f'Device online: {str(msg.payload)}')
                     
                     if msg.payload == b'webapp':
-                        controller.mqtt.publish(f'device/ack/{msg.payload}', payload='1' if controller.armed else '0', qos=1)
+                        controller.mqtt.publish(f'device/ack/webapp', payload='1' if controller.armed else '0', qos=1)
                     else: 
 
                         # save its id (sent in the msg payload) to the online devices
