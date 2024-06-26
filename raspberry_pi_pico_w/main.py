@@ -4,7 +4,6 @@ from umqtt.simple import MQTTClient
 from mfrc522 import MFRC522
 
 import utime
-import machine
 from machine import Pin
 
 import secrets as cfg
@@ -26,13 +25,14 @@ class Alarm:
         self.connect_to_mqtt()
                 
         # subscribe to relevant topics
-        self.mqtt.subscribe(b'device/ack/'+cfg.DEVICE_ID)
-        self.mqtt.subscribe(b'alarm/disarm')
-        self.mqtt.subscribe(b'alarm/rearm')
-        self.mqtt.subscribe(b'alarm/sound')
+        self.mqtt.subscribe('device/ack/'+cfg.DEVICE_ID)
+        self.mqtt.subscribe('alarm/disarm')
+        self.mqtt.subscribe('alarm/rearm')
+        self.mqtt.subscribe('alarm/rearm/'+cfg.DEVICE_ID)
+        self.mqtt.subscribe('alarm/sound')
 
-        self.mqtt.publish(b'device/online', cfg.DEVICE_ID)
-        self.mqtt.set_last_will(b'device/offline', cfg.DEVICE_ID)
+        self.mqtt.publish('device/online', cfg.DEVICE_ID)
+        self.mqtt.set_last_will('device/offline', cfg.DEVICE_ID)
         print('MQTT OK')
 
     # connect to wifi
@@ -52,8 +52,8 @@ class Alarm:
                 self.mqtt = MQTTClient(client_id=cfg.DEVICE_ID,
                     server=cfg.MQTT_BROKER,
                     port=cfg.MQTT_PORT,
-                    #user=cfg.MQTT_USER,
-                    #password=cfg.MQTT_PASSWORD,
+                    user=cfg.MQTT_USER,
+                    password=cfg.MQTT_PASSWORD,
                     keepalive=60,
                     #ssl=cfg.MQTT_SSL,
                     #ssl_params=cfg.MQTT_SSL_PARAMS
@@ -61,7 +61,7 @@ class Alarm:
                 self.mqtt.set_callback(self.recv_msg)
                 self.mqtt.connect()
                 # subscribe to relevant topics
-                self.mqtt.subscribe(b'image/request')
+                self.mqtt.subscribe('image/request')
                 print('MQTT OK')
                 return
             except OSError as e:
@@ -122,7 +122,7 @@ class Alarm:
                     # if the uid denotes a card which is authorized to defuse the alarm, do so
                     if card in cfg.RFID_AUTHORIZED:
                         print('AUTH OK')
-                        self.mqtt.publish(b'alarm/disarm', cfg.DEVICE_ID)
+                        self.mqtt.publish('alarm/disarm', cfg.DEVICE_ID)
                         self.disarm()
 
                     # otherwise, the card is invalid
@@ -141,21 +141,25 @@ class Alarm:
     # callback for the interrupt
     def motion_triggered(self, _):
         if self.armed:
-            self.mqtt.publish(b'image/request', cfg.CAM_ID)
+            self.mqtt.publish('image/request', cfg.CAM_ID)
             print('MOVEMENT DETECTED!')
             self.poll_card()
 
     # callback for the mqtt client
     def recv_msg(self, topic, msg):
-        if topic == b'device/ack/'+cfg.DEVICE_ID:
+        print('MSG ON '+topic.decode('ASCII'))
+        ack_topic = 'device/ack/'+cfg.DEVICE_ID
+        rearm_topic = 'alarm/rearm/'+cfg.DEVICE_ID
+        if topic == ack_topic.encode('ASCII') or topic == ack_topic.encode('utf-8'):
             try:
                 new_RFID = int.from_bytes(bytes(msg), 'little', False)
                 cfg.RFID_AUTHORIZED.append(new_RFID)
+                print('AUTH ADD')
             except:
                 pass
         elif topic == b'alarm/disarm':
             self.disarm()
-        elif topic == b'alarm/rearm':
+        elif topic == b'alarm/rearm' or topic == rearm_topic.encode('ASCII') or topic == rearm_topic.encode('utf-8'):
             self.rearm()
         elif topic == b'alarm/sound':
             self.sound()
