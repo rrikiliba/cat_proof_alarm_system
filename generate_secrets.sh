@@ -41,9 +41,9 @@ MQTT_USER=
 MQTT_PASSWORD=
 # Uses docker network for automatic dns resolution, you don't need to change this
 HTTP_HOST=cat_proof_alarm
-# The webserver will listen on this port
-HTTP_PORT=
-# The memory address of the I2C device (use i2cdetect to find it)
-I2C_ADDR=" > orange_pi_zero_2w/.env
+# The webserver will listen on this port (default: 5000)
+HTTP_PORT=5000
+# The memory address of the I2C device (use i2cdetect to find it, default: 0x3c)
+I2C_ADDR=0x3c" > orange_pi_zero_2w/.env
 touch orange_pi_zero_2w/controller/.authfile
 echo "admin:$7$101$NBZcAb+v3xOjrRoR$lub+0XOCLjlgXK76KguA9SnfveJ1AoXcriMKrwEtYqFUIEGsyZMOB3xqw1mGZ0vLHOhBgjhUNJpdfbv0Um4DVg==" > orange_pi_zero_2w/mosquitto/passwd
