@@ -65,16 +65,21 @@ function onImageRecived(){
     document.getElementById('callTheCops').style.display = 'block';
 }
 
-document.getElementById('connect').addEventListener('submit', function(e) {
-    e.preventDefault();
+document.getElementById('brokerForm').addEventListener('submit', function(e) {
+    e.preventDefault();    
     var brokerPassword = document.getElementById('brokerPassword').value;
-
     try {
-        client = new Paho.MQTT.Client(hostname, Number(9001), "webapp");
-        client.onConnectionLost = onConnectionLost;
-        client.onMessageArrived = onMessageArrived;
+        var client = new Paho.MQTT.Client('hostname', Number(9001), "webapp");
+        client.onConnectionLost = function(responseObject) {
+            console.log("Connection lost: ", responseObject.errorMessage);
+        };
+        client.onMessageArrived = function(message) {
+            console.log("Message arrived: ", message.payloadString);
+        };
         client.connect({
-            onSuccess: onConnect,
+            onSuccess: function() {
+                console.log("Connected successfully");
+            },
             onFailure: function (error) {
                 console.log("Connection failed: ", error.errorMessage);
             },
@@ -87,6 +92,16 @@ document.getElementById('connect').addEventListener('submit', function(e) {
     }
 });
 
+document.getElementById('togglePassword').addEventListener('click', function() {
+    var passwordField = document.getElementById('brokerPassword');
+    var passwordFieldType = passwordField.getAttribute('type');
+    if (passwordFieldType === 'password') {
+        passwordField.setAttribute('type', 'text');
+    } else {
+        passwordField.setAttribute('type', 'password');
+    }
+});
+
 document.getElementById('arm').addEventListener('click', function() {
     if(!isArmed) {
         if (client && client.isConnected()) {
@@ -95,6 +110,7 @@ document.getElementById('arm').addEventListener('click', function() {
             client.send(message);
             console.log("Message sent: armed");
             isArmed = true;
+            setButtonState();
         } else {
             console.log("Client is not connected");
             alert("Broker is not connected");
@@ -106,12 +122,12 @@ document.getElementById('arm').addEventListener('click', function() {
             client.send(message);
             console.log("Message sent: disarmed");
             isArmed = false;
+            setButtonState();
         } else {
             console.log("Client is not connected");
             alert("Broker is not connected");
         }
     }
-    setButtonState();
 });
 
 document.addEventListener('DOMContentLoaded', function () {
