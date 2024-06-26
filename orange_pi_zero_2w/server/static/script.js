@@ -72,7 +72,7 @@ document.getElementById('brokerForm').addEventListener('submit', function(e) {
     e.preventDefault();    
     var brokerPassword = document.getElementById('brokerPassword').value;
     try {
-        var client = new Paho.MQTT.Client(window.location.hostname, Number(9001), "webapp");
+        client = new Paho.MQTT.Client(window.location.hostname, Number(9001), "webapp");
         client.onConnectionLost = function(responseObject) {
             console.log("Connection lost: ", responseObject.errorMessage);
         };
