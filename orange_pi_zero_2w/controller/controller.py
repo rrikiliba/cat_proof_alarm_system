@@ -24,7 +24,7 @@ class Controller:
         
         # attempt to initialize the ssd1306 OLED device that communicates via I²C
         try:
-            serial = i2c(port=int(env('I2C_ID')), address=int(env('I2C_ADDR')))
+            serial = i2c(port=1, address=int(env('I2C_ADDR')))
             self.screen = ssd1306(serial)
         except Exception as e:
             self.log(e, start='!', oled=False)

@@ -43,8 +43,6 @@ echo -e "# Uses the docker network feature for automatic dns resolution, you don
         HTTP_HOST=cat_proof_alarm\n
         # The webserver will listen on this port
         HTTP_PORT=\n
-        # The ID of the I2C device (default: 1)\n 
-        I2C_ID=\n
         # The memory address of the I2C device (use i2cdetect to find it)\n
         I2C_ADDR=" > orange_pi_zero_2w/.env
 touch orange_pi_zero_2w/.authfile
