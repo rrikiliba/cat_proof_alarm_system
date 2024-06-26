@@ -105,10 +105,15 @@ As for the next steps, each of the three boards require a different setup in ord
 1. Clone this repo from the device itself via `git clone`
 1. Place yourself inside the `orange_pi_zero_2w` folder and run
 
-	`docker compose --profile release up`
+	`docker compose --profile with-i2c up`
 
-	> Note: 
-	> To run the docker container on a PC, use the profile 'debug'
+	or
+
+	`docker compose --profile no-i2c up`
+
+	> Note
+	> The 'with-i2c' profile will try to initialize I²C interface with ID 1 to connect to the external OLED screen.
+	> If your device does not have I²C or you do not have an SSD1306 connected to it, you can use the 'no-i2c' profile.
 
 1. Now the system is up and running!  
 

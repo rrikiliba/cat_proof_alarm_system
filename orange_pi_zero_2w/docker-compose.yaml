@@ -1,8 +1,8 @@
 services:
   mosquitto:
     profiles:
-      - debug
-      - release
+      - with-i2c
+      - no-i2c
     image: eclipse-mosquitto:latest
     networks:
       - alarm_network
@@ -17,9 +17,9 @@ services:
       - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
       - ./mosquitto/data:/mosquitto/data
       - ./mosquitto/log:/mosquitto/log
-  controller_pc:
+  controller_no_i2c:
     profiles:
-      - debug
+      - no-i2c
     build: ./controller/
     networks:
       - alarm_network
@@ -37,10 +37,10 @@ services:
     env_file:
       - path: .env
         required: true
-  controller_soc:
+  controller_with_i2c:
     profiles:
-      - release
-    build: .
+      - with-i2c
+    build: ./controller/
     networks:
       - alarm_network
     hostname: alarm_controller
