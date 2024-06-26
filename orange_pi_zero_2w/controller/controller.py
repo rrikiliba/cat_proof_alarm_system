@@ -2,6 +2,9 @@ from ultralytics import YOLO
 import paho.mqtt as mqtt
 from paho.mqtt import client as _
 import luma.oled as oled
+from luma.core.interface.serial import i2c
+from luma.oled.device import ssd1306
+from os import getenv as env
 from threading import Thread
 import time
 import datetime
@@ -21,9 +24,10 @@ class Controller:
         
         # attempt to initialize the ssd1306 OLED device that communicates via I²C
         try:
-            serial = oled.serial.i2c()
-            self.screen = oled.device.ssd1306(serial)
-        except:
+            serial = i2c(port=int(env('I2C_ID')), address=int(env('I2C_ADDR')))
+            self.screen = ssd1306(serial)
+        except Exception as e:
+            self.log(e, start='!', oled=False)
             pass
         self.log(f'Screen connected: {hasattr(self, "screen")}', start='*', oled=False)
 
@@ -44,7 +48,7 @@ class Controller:
                     count = count + 1
                 except:
                     # signal possible errors (couldn't parse int)
-                    self.log(f'Found malformed entry at line {count}', start='*')
+                    self.log(f'Found malformed entry at line {count}', start='!')
             self.log(f'Loaded {count} entries', start='*')
 
         # states for the controller
@@ -79,13 +83,13 @@ class Controller:
                 self.log(f'{obj} detected at {confidence*100}%, defused')
                 return True
     
-        self.log('No cat or dog detected')
+        self.log('No cat or dog detected', start='!')
         return False
     
     # custom logging function that will attempt to write the passed message both to stdout and to the OLED device, if present
     def log(self, msg, start='>', timestamp=None, use_timestamp=True, stdout=True, oled=True):
         if use_timestamp and timestamp is None:
-            timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+            timestamp = datetime.datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
         elif not use_timestamp and timestamp is not None:
             timestamp = None
 
@@ -165,7 +169,7 @@ class Controller:
                         
                 # in case an image is submitted to for inference
                 case 'image/submit':
-                    timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+                    timestamp = datetime.datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
 
                     # log the event
                     controller.log(f'Image received', timestamp=timestamp)
@@ -197,7 +201,7 @@ class Controller:
                         if controller.triggered:
                             controller.devices.discard(device)
                             controller.mqtt.publish('alarm/sound', payload=None, qos=1)
-                            controller.log('Alarm sound!')
+                            controller.log('Alarm sound', start='!')
                     timer = Thread(target=timer_callback, kwargs={'device': str(msg.payload)})
                     timer.start()
 
@@ -222,7 +226,6 @@ class Controller:
         controller.mqtt.loop_forever()
 
 if __name__ == '__main__':
-    from os import getenv as env
     Controller.start(user=env('MQTT_USER'),
                      password=env('MQTT_PASSWORD'),
                      host=env('MQTT_HOST'),
