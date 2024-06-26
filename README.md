@@ -84,7 +84,7 @@ For 1-3, the necessary variables, their meaning and use can be all found in the 
 
 `.authfile` contains the ids of the RFID devices that are authorized to defuse the system, simply written one per line.
 
-`passwd` contains the `username:password` pair for the MQTT users; includes the default ones.
+`passwd` contains the `username:password` pair for the MQTT users; includes the default ones, but you can add new ones using the tool [mosquitto_passwd](https://mosquitto.org/man/mosquitto_passwd-1.html)
 
 As for the next steps, each of the three boards require a different setup in order to run the designated code, as explained below
 
