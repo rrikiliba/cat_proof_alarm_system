@@ -24,7 +24,7 @@ The goal is to develop a system that enables users to utilize a motion-based ala
 * [thonny](https://github.com/thonny/thonny) or [rshell](https://github.com/dhylands/rshell)
 
 
-## Project layout
+## Project Layout
 ```
 [cat_proof_alarm_system]
 ├── [documentation]
@@ -32,7 +32,7 @@ The goal is to develop a system that enables users to utilize a motion-based ala
 │   ├── [firmware]
 │   ├── [lib]
 │   └── main.py
-├── [orange_pi_zero_2w]					# Runs the server for the broker and the controller, controls the display 
+├── [orange_pi_zero_2w]					# Runs the webserver, the MQTT broker and the controller, controls the display 
 │   ├── docker-compose.yaml
 │   ├── [controller]
 │   │	 ├── controller.py
@@ -58,9 +58,9 @@ The goal is to develop a system that enables users to utilize a motion-based ala
 │   └── main.py
 └── generate_secrets.sh
 ```
-## How to run the project
+## Getting Started
 
-### Hardware setup
+### Hardware Setup
 
 ![orange pi zero 2w wiring](documentation/diagrams/orange_pi_zero_2w.png)
 
@@ -68,7 +68,7 @@ The goal is to develop a system that enables users to utilize a motion-based ala
 
 ![esp32 wiring](documentation/diagrams/esp32.png)
 
-### Software setup
+### Software Setup
 
 First of all, clone this repo in your desired workspace.
 After that place yourself inside the cloned directory and run the `generate_secrets.sh` script. This will create the necessary configuration files, with all the required variables that need to be set.
@@ -88,7 +88,7 @@ For 1-3, the necessary variables, their meaning and use can be all found in the 
 
 As for the next steps, each of the three boards require a different setup in order to run the designated code, as explained below
 
-#### Raspberry pi pico w
+#### Raspberry Pi Pico W
 
 1. Connect the board via USB while holding the BOOTSEL button; your PC will recognize it as a generic mounted storage
 1. Drag and drop the file provided in the [firmware folder](raspberry_pi_pico_w/firmware) inside the mounted storage
@@ -96,7 +96,7 @@ As for the next steps, each of the three boards require a different setup in ord
 1. Using either the Thonny IDE or the rshell CLI as detailed in the [official documentation](https://datasheets.raspberrypi.com/pico/raspberry-pi-pico-python-sdk.pdf), copy both `main.py` and the `lib` folder to the device
 1. All set! now you can either simply power on the device and check output via serial communication, or execute it inside Thonny
 
-#### Esp32
+#### ESP32-CAM
 
 1. Install [esptool](https://docs.espressif.com/projects/esptool/en/latest/esp32/installation.html), a CLI utility to flash the ESP family of boards, by following the provided instructions
 1. Clear the flash by running the following:
@@ -109,7 +109,7 @@ As for the next steps, each of the three boards require a different setup in ord
 1. Using either the Thonny IDE or the rshell CLI as above, copy both `main.py` and the `lib` folder to the device
 1. All set! now you can either simply power on the device and check output via serial communication, or execute it inside Thonny
 
-#### Orange pi zero 2w
+#### Orange Pi Zero 2W
 
 1. Download any compatible OS image. There exist an [Armbian](https://www.armbian.com/orange-pi-zero-2w/#) image, a [Dietpi](https://dietpi.com/#downloadinfo) image and a number of officially supported [images](http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/service-and-support/Orange-Pi-Zero-2W.html) by the manufacturer itself. We used the official Debian Bookworm server [image](https://drive.google.com/drive/folders/1wjhR3YDvZzoBq7UiTYBgAUEWATIPNAjJ)
 1. Flash the image to a TF / micro sd card using any of the many available flashing tools, such as [Balena Etcher](https://etcher.balena.io/)
@@ -125,7 +125,7 @@ As for the next steps, each of the three boards require a different setup in ord
 
 1. Now the system is up and running!  
 
-## User guide
+## User Guide
 
 First, the user needs to setup the project as detailed above, then place the three powered up devices in the same WAN. The camera device should point towards the area covered by the motion detection device, which in turn should be placed near any entry point, such as a door or a window. The controller device can be placed anywhere.
 
@@ -135,10 +135,10 @@ Then, to use the alarm, the user needs to connect to the webapp and authenticate
 
 ## Links
 
-1. [powerpoint]()
-1. [presentation video]()
+1. [Canvas presentation]()
+1. [Video presentation]()
 
-## Team members' contributions
+## Team Members' Contributions
 
 Riccardo Libanora:
 
@@ -146,7 +146,7 @@ Riccardo Libanora:
 - Esp32 code development
 - Orange pi zero 2w code development
 - Mqtt broker and topics, network setup
-- "How to run the project" section of documentation
+- "Getting started" section of documentation
 
 Davide Zanolini: 
 
@@ -155,3 +155,9 @@ Davide Zanolini:
 - Orange pi zero 2w OLED integration
 - Documentation
 - Presentation
+
+## Additional Notes
+
+- We chose to adopt a combination of Python and Micropython for this project, in order to keep the codebase as small and cohesive as possible; by using a common abstraction layer above hardware that would otherwise require drastically differing libraries, we saved on development complexity and time.
+- While this might be an issue with our specific esp32 board model, there was a problem with its compatibility with Micropython. The pin used for the camera flash on this board was somehow also an hardware reset pin. This lead to strange interactions, such as the flash turning on when connecting to the boards USB and the board getting stuck in this state and reporting as unresponsive. We admittingly didn't give this much thought and just disconnected this pin. The board then worked just fine, with of course the exception of the flash.
+- Since all the functionality of the controller device is achieved through Docker containers, you don't actually need an Orange Pi Zero 2W to run that portion of the project. You can run it on any device (embedded or not) and, by connecting it to I²C with ID 1 on your device, you can also optionally use the external OLED display as instructed above.
