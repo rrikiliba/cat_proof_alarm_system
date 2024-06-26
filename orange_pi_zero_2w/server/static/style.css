@@ -172,7 +172,31 @@ p {
 }
 
 .instruction {
-    margin-bottom: 10px; /* Spazio inferiore */
-    font-weight: bold; /* Testo in grassetto */
-    color: #666; /* Colore del testo */
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #666;
+}
+
+#arm {
+    display: none;
+}
+
+.connected #arm {
+    display: block;
+}
+
+#brokerForm {
+    display: block;
+}
+
+.system-on #brokerForm {
+    display: none;
+}
+
+.instruction {
+    display: block;
+}
+
+.connected .instruction {
+    display: none;
 }

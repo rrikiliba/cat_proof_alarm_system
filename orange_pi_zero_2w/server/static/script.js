@@ -11,6 +11,10 @@ function onConnect() {
     client.subscribe('alarm/rearm')
     console.log("Connected to broker");
     updateStatus('brokerStatus', true);
+    var message = new Paho.MQTT.Message("webapp");
+    message.destinationName = "device/online";
+    client.send(message);
+    console.log("Message sent: webapp");
 }
 
 function onConnectionLost(responseObject) {
@@ -42,6 +46,7 @@ function onMessageArrived(message) {
         setButtonState();
     }
     else if(message.destinationName === "device/ack/webapp") {
+        updateStatus('alarmStatus', true);
         if (message.payloadString === '0') {
             isArmed = false;
         } else {
@@ -69,7 +74,7 @@ document.getElementById('brokerForm').addEventListener('submit', function(e) {
     e.preventDefault();    
     var brokerPassword = document.getElementById('brokerPassword').value;
     try {
-        var client = new Paho.MQTT.Client('hostname', Number(9001), "webapp");
+        var client = new Paho.MQTT.Client(hostname, Number(9001), "webapp");
         client.onConnectionLost = function(responseObject) {
             console.log("Connection lost: ", responseObject.errorMessage);
         };
@@ -137,14 +142,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function updateStatus(elementId, isConnected) {
     const element = document.getElementById(elementId);
+    const passwordMessage = document.querySelector('.instruction');
+    isConnected = true;
     if (isConnected) {
         element.classList.add('connected');
         element.classList.remove('disconnected');
         element.textContent = `${elementId.replace('Status', ' status')}: Connected`;
+        document.getElementById('brokerForm').style.display = 'none';
+        document.getElementById('arm').style.display = 'block';
+        document.getElementById('systemStatus').style.display = 'block';
+        passwordMessage.style.display = 'none';
     } else {
         element.classList.add('disconnected');
         element.classList.remove('connected');
         element.textContent = `${elementId.replace('Status', ' status')}: Disconnected`;
+
+        document.getElementById('brokerForm').style.display = 'block';
+        document.getElementById('arm').style.display = 'none';
+        document.getElementById('systemStatus').style.display = 'none';
+        passwordMessage.style.display = 'block';
     }
     checkSystemStatus();
 }
@@ -153,6 +169,7 @@ function checkSystemStatus() {
     const brokerConnected = document.getElementById('brokerStatus').classList.contains('connected');
     const alarmConnected = document.getElementById('alarmStatus').classList.contains('connected');
     const systemStatus = document.getElementById('systemStatus');
+    const alarmArmed = document.getElementById('alarmArmed');
 
     if (brokerConnected && alarmConnected) {
         systemStatus.textContent = "The alarm is on";
@@ -162,5 +179,13 @@ function checkSystemStatus() {
     } else {
         systemStatus.textContent = "";
         systemStatus.classList.remove('connected');
+    }
+    if(isArmed){
+        alarmArmed.textContent = "The alarm is armed";
+        alarmArmed.classList.add('status-box', 'connected');
+    }
+    else{
+        alarmArmed.textContent = "The alarm is disarmed";
+        alarmArmed.classList.add('status-box', 'disconnected');
     }
 }
