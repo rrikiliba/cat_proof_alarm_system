@@ -61,8 +61,8 @@ services:
         required: true
   server:
     profiles:
-      - debug
-      - release
+      - with-i2c
+      - no-i2c
     build: ./server/
     networks:
       - alarm_network
