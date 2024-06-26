@@ -187,22 +187,23 @@ class Controller:
                     # log the event
                     controller.log(f'Image requested')
 
-                    # put the alarm in the 'triggered' state
-                    controller.triggered = True
-
-                    # start a 20 second timer before sounding the alarm
-                    # so that there is time to use the RFID to disarm the system
-                    # and to perform inference to check if a cat is in the image
-                    def timer_callback(device=None):
-                        for i in range(20, 0, -1):
-                            controller.log(f"Time left: {i}", stdout=False)
-                            time.sleep(1)
-                        if controller.triggered:
-                            controller.devices.discard(device)
-                            controller.mqtt.publish('alarm/sound', payload=None, qos=1)
-                            controller.log('Alarm sound', start='!')
-                    timer = Thread(target=timer_callback, kwargs={'device': msg.payload.decode('ASCII')})
-                    timer.start()
+                    if controller.armed:
+                        # put the alarm in the 'triggered' state
+                        controller.triggered = True
+                        
+                        # start a 20 second timer before sounding the alarm
+                        # so that there is time to use the RFID to disarm the system
+                        # and to perform inference to check if a cat is in the image
+                        def timer_callback(device=None):
+                            for i in range(20, 0, -1):
+                                controller.log(f"Time left: {i}", stdout=False)
+                                time.sleep(1)
+                            if controller.triggered:
+                                controller.devices.discard(device)
+                                controller.mqtt.publish('alarm/sound', payload=None, qos=1)
+                                controller.log('Alarm sound', start='!')
+                        timer = Thread(target=timer_callback, kwargs={'device': msg.payload.decode('ASCII')})
+                        timer.start()
 
                 # in case the alarm needs to be disarmed
                 case 'alarm/disarm':
