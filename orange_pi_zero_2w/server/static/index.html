@@ -1,21 +1,31 @@
 <!DOCTYPE html>
 <html>
+<head>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
 <body>
-    <h1>Connect to your home alarm</h1>
-    <p id="brokerStatus">Broker status: Disconnected</p>
-    <p id="alarmStatus">Alarm status: Disconnected</p>
+    <div class="header-container">
+        <h1>Connect to your home alarm</h1>
+        <img src="icon.png" alt="icon" id="icon">
+    </div>
+    <p id="brokerStatus" class="status-box disconnected">Broker status: Disconnected</p>
+    <p id="alarmStatus" class="status-box disconnected">Alarm status: Disconnected</p>
+    <p id="systemStatus"></p>
+    <p class="instruction">Insert password to connect to your home alarm</p>
     <form id="brokerForm">
-        <input type="password" id="brokerPassword" placeholder="Broker password"><br>
+        <div class="inputContainer">
+            <input type="password" id="brokerPassword" placeholder="Broker password">
+            <span id="togglePassword" class="togglePassword">&#128065;</span>
+        </div>
         <div class="buttonContainer">
             <button type="submit" id="connect" class="button">Connect</button>
             <button type="button" id="arm" class="button">Arm</button>
         </div>
     </form>
     <button id="callTheCops">Click here to call the cops</button>
+    <div id="imageContainer"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
     <script src="script.js"></script>
-    <div id="imageContainer"></div>
-    <link rel="stylesheet" type="text/css" href="style.css">
 </body>
 </html>
