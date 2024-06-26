@@ -20,10 +20,10 @@ def connect_to_wifi():
 def connect_to_mqtt():
 
     def recv_msg(topic, msg):
-        if msg == cfg.DEVICE_ID:
+        if msg == cfg.DEVICE_ID.encode('ASCII') or msg == cfg.DEVICE_ID.encode('utf-8'):
             print('IMG REQ')
             buf = camera.capture()
-            mqtt.publish(b'image/submit', buf)
+            mqtt.publish('image/submit', buf)
 
     while True:
         try:
@@ -39,7 +39,7 @@ def connect_to_mqtt():
             mqtt.set_callback(recv_msg)
             mqtt.connect()
             # subscribe to relevant topics
-            mqtt.subscribe(b'image/request')
+            mqtt.subscribe('image/request')
             print('MQTT OK')
             return mqtt
         except OSError as e:
