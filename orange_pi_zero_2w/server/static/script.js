@@ -141,7 +141,6 @@ document.addEventListener('DOMContentLoaded', function () {
 function updateStatus(elementId, isConnected) {
     const element = document.getElementById(elementId);
     const passwordMessage = document.querySelector('.instruction');
-    isConnected = true;
     if (isConnected) {
         element.classList.add('connected');
         element.classList.remove('disconnected');
