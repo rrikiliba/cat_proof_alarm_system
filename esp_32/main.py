@@ -64,8 +64,7 @@ if __name__ == '__main__':
     print('BOOT OK')
     while True:
         try:
-            mqtt.check_msg()
-            utime.sleep_ms(100)
+            mqtt.wait_msg()
         except:
             print('CONN LOST')
             conn = connect_to_wifi()
