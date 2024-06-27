@@ -19,7 +19,7 @@ def connect_to_wifi():
 def connect_to_mqtt():
 
     def recv_msg(topic, msg):
-        if msg == cfg.DEVICE_ID.encode('ASCII') or msg == cfg.DEVICE_ID.encode('utf-8'):
+        if msg.decode('ASCII') == cfg.DEVICE_ID:
             print('IMG REQ')
             try:
                 camera.init(0, format=camera.JPEG, fb_location=camera.PSRAM, xclk_freq=camera.XCLK_10MHz)
@@ -40,7 +40,7 @@ def connect_to_mqtt():
                     port=cfg.MQTT_PORT,
                     user=cfg.MQTT_USER,
                     password=cfg.MQTT_PASSWORD,
-                    keepalive=60,
+                    keepalive=120,
                     #ssl=cfg.MQTT_SSL,
                     #ssl_params=cfg.MQTT_SSL_PARAMS
                     )
@@ -48,6 +48,8 @@ def connect_to_mqtt():
             mqtt.connect()
             # subscribe to relevant topics
             mqtt.subscribe('image/request')
+            mqtt.publish('device/online', cfg.DEVICE_ID)
+            mqtt.set_last_will('device/offline', cfg.DEVICE_ID)
             print('MQTT OK')
             return mqtt
         except OSError as e:

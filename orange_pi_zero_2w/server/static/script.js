@@ -88,7 +88,8 @@ document.getElementById('brokerForm').addEventListener('submit', function(e) {
                 console.log("Connection failed: ", error.errorMessage);
             },
             userName: "admin",
-            password: brokerPassword
+            password: brokerPassword,
+            keepAliveInterval: 300
         });
     } catch (error) {
         console.error("Failed to connect to broker: ", error);

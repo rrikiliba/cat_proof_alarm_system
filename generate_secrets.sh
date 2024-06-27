@@ -34,8 +34,8 @@ echo -e "# Uses the docker network feature for automatic dns resolution, you don
 MQTT_HOST=mosquitto
 # Port on which the MQTT broker is listening on (default: 1883)
 MQTT_PORT=1883
-# Keep alive value for the MQTT connection (default: 60)
-MQTT_KEEPALIVE=60
+# Keep alive value for the MQTT connection (default: 120)
+MQTT_KEEPALIVE=120
 # Credentials for Mosquitto broker
 MQTT_USER=
 MQTT_PASSWORD=

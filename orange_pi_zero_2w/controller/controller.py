@@ -141,7 +141,7 @@ class Controller:
                 # in case a device goes offline
                 case 'device/offline':
                     # log the event
-                    controller.log(f'Device offline: {msg.payload.decode("ASCII")}')
+                    controller.log(f'Device offline: {msg.payload.decode("ASCII")}', start='!')
 
                     # take action if the device is brought offline
                     # while the system is armed
@@ -164,7 +164,7 @@ class Controller:
                         timer = Thread(target=timer_callback, kwargs={'device': msg.payload.decode('ASCII')})
                         timer.start()
                     else:
-                        controller.devices.discard(msg.payload)
+                        controller.devices.discard(msg.payload.decode('ASCII'))
                         
                 # in case an image is submitted to for inference
                 case 'image/submit':
