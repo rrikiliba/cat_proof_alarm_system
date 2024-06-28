@@ -130,6 +130,50 @@ As for the next steps, each of the three boards require a different setup in ord
 
 1. Now the system is up and running!  
 
+### Network Setup
+
+As long as the correct SSID and passwords are set in the devices configuration files, all the components are plug&play. If anything goes wrong and the boards don't seem to communicate, you can use the [mosquitto_sub](https://mosquitto.org/man/mosquitto_sub-1.html)/[mosquitto_pub](https://mosquitto.org/man/mosquitto_pub-1.html) utilities to send messages to the MQTT topics and test the responses from the boards. These are the topics and their use.
+
+##### device/online
+
+This topic is used to send a message when a new device (alarm, camera or webapp) first connects to the network, containing the ID of the new device. It is read by the controller, which adds it to the list of connected devices.
+
+##### device/ack/{device_id}
+
+After a new device sends its id on device/online, it can listen for an ACK on this channel. Depending on the type of device it can receive different data that is important for its function:
+
+- the webapp receives the status of the alarm (armed/disarmed) to update the GUI and allow the user to interact correctly
+- the alarm receives in each ACK message the ID of an RFID device that is authorized to defuse the system
+ 
+
+##### device/offline
+
+Is configured as topic of the last will message of the devices (excluding the webapp). Contains as message the ID of the device. When this message is received by the controller, it engages security measures if the alarm is armed and the device was brought offline, as it considers it suspicious activity.
+
+##### image/request
+
+This topic is used for the alarm to request an image to its associated camera device when triggered, the ID of which is placed as payload of the message. The controller also reads this request and starts the 20 second countdown to the alarm sound.
+
+##### image/submit
+
+After receiving a request, the camera device sends the raw binary data of the JPEG image on this topic, which is then read and processed by the controller to employ its cat detection functionality.
+
+##### alarm/rearm
+
+A message on this topic alerts both the controller and all alarm devices to change their internal status to "armed".
+
+##### alarm/rearm/{device_id}
+
+Alternatively only one alarm device can be targeted, such as when it first goes online and needs to be updated to the "armed" status.
+
+##### alarm/disarm
+
+A message on this topic alerts both the controller and all the alarm devices to change their internal status to "disarmed".
+
+##### alarm/sound
+
+A message on this topic causes all alarm devices to sound their buzzers.
+
 ## User Guide
 
 First, the user needs to setup the project as detailed above, then place the three powered up devices in the same WAN. The camera device should point towards the area covered by the motion detection device, which in turn should be placed near any entry point, such as a door or a window. The controller device can be placed anywhere.
@@ -163,6 +207,6 @@ Davide Zanolini:
 
 ## Additional Notes
 
-- We chose to adopt a combination of Python and Micropython for this project, in order to keep the codebase as small and cohesive as possible; by using a common abstraction layer above hardware that would otherwise require drastically differing libraries, we saved on development complexity and time.
+- We chose to adopt a combination of Python and Micropython for this project, in order to keep the codebase as small and cohesive as possible; by using a common abstraction layer above hardware that would otherwise require drastically differing libraries, we saved on development complexity and time, not without some compromises.
 - While this might be an issue with our specific esp32 board model, there was a problem with its compatibility with Micropython. The pin used for the camera flash on this board was somehow also an hardware reset pin. This lead to strange interactions, such as the flash turning on when connecting to the boards USB and the board getting stuck in this state and reporting as unresponsive. We admittingly didn't give this much thought and just disconnected this pin. The board then worked just fine, with of course the exception of the flash.
 - Since all the functionality of the controller device is achieved through Docker containers, you don't actually need an Orange Pi Zero 2W to run that portion of the project. You can run it on any device (embedded or not) and, by connecting it to I²C port 1 on your device and configuring the correct parameter in the .env file, you can also optionally use the external OLED display as instructed above.
