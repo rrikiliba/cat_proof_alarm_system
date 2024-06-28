@@ -73,7 +73,7 @@ document.getElementById('brokerForm').addEventListener('submit', function(e) {
             },
             userName: "admin",
             password: brokerPassword,
-            keepAliveInterval: 300
+            keepAliveInterval: 0
         });
         client.onConnectionLost = function(responseObject) {
             console.log("Connection lost: ", responseObject.errorMessage);
