@@ -43,12 +43,7 @@ function onMessageArrived(message) {
     }
     else if(message.destinationName === "device/ack/webapp") {
         console.log("Device ack: " + message.payloadString);
-        if (message.payloadString === '1') {
-            updateStatus('alarmStatus', true);
-        }else{
-            isAlarmConnected('alarmStatus', false);
-            //alert("Alarm is not connected");
-        }
+        updateStatus('alarmStatus', true);
     }
 }
 
