@@ -134,45 +134,45 @@ As for the next steps, each of the three boards require a different setup in ord
 
 As long as the correct SSID and passwords are set in the devices configuration files, all the components are plug&play. If anything goes wrong and the boards don't seem to communicate, you can use the [mosquitto_sub](https://mosquitto.org/man/mosquitto_sub-1.html)/[mosquitto_pub](https://mosquitto.org/man/mosquitto_pub-1.html) utilities to send messages to the MQTT topics and test the responses from the boards. These are the topics and their use.
 
-##### device/online
+- device/online
 
-This topic is used to send a message when a new device (alarm, camera or webapp) first connects to the network, containing the ID of the new device. It is read by the controller, which adds it to the list of connected devices.
+	This topic is used to send a message when a new device (alarm, camera or webapp) first connects to the network, containing the ID of the new device. It is read by the controller, which adds it to the list of connected devices.
 
-##### device/ack/{device_id}
+- device/ack/{device_id}
 
-After a new device sends its id on device/online, it can listen for an ACK on this channel. Depending on the type of device it can receive different data that is important for its function:
+	After a new device sends its id on device/online, it can listen for an ACK on this channel. Depending on the type of device it can receive different data that is important for its function:
 
-- the webapp receives the status of the alarm (armed/disarmed) to update the GUI and allow the user to interact correctly
-- the alarm receives in each ACK message the ID of an RFID device that is authorized to defuse the system
+	- the webapp receives the status of the alarm (armed/disarmed) to update the GUI and allow the user to interact correctly
+	- the alarm receives in each ACK message the ID of an RFID device that is authorized to defuse the system
  
 
-##### device/offline
+- device/offline
 
-Is configured as topic of the last will message of the devices (excluding the webapp). Contains as message the ID of the device. When this message is received by the controller, it engages security measures if the alarm is armed and the device was brought offline, as it considers it suspicious activity.
+	Is configured as topic of the last will message of the devices (excluding the webapp). Contains as message the ID of the device. When this message is received by the controller, it engages security measures if the alarm is armed and the device was brought offline, as it considers it suspicious activity.
 
-##### image/request
+ - image/request
 
-This topic is used for the alarm to request an image to its associated camera device when triggered, the ID of which is placed as payload of the message. The controller also reads this request and starts the 20 second countdown to the alarm sound.
+	This topic is used for the alarm to request an image to its associated camera device when triggered, the ID of which is placed as payload of the message. The controller also reads this request and starts the 20 second countdown to the alarm sound.
 
-##### image/submit
+- image/submit
 
-After receiving a request, the camera device sends the raw binary data of the JPEG image on this topic, which is then read and processed by the controller to employ its cat detection functionality.
+	After receiving a request, the camera device sends the raw binary data of the JPEG image on this topic, which is then read and processed by the controller to employ its cat detection functionality.
 
-##### alarm/rearm
+- alarm/rearm
 
-A message on this topic alerts both the controller and all alarm devices to change their internal status to "armed".
+	A message on this topic alerts both the controller and all alarm devices to change their internal status to "armed".
 
-##### alarm/rearm/{device_id}
+- alarm/rearm/{device_id}
 
-Alternatively only one alarm device can be targeted, such as when it first goes online and needs to be updated to the "armed" status.
+	Alternatively only one alarm device can be targeted, such as when it first goes online and needs to be updated to the "armed" status.
 
-##### alarm/disarm
+- alarm/disarm
 
-A message on this topic alerts both the controller and all the alarm devices to change their internal status to "disarmed".
+	A message on this topic alerts both the controller and all the alarm devices to change their internal status to "disarmed".
 
-##### alarm/sound
+- alarm/sound
 
-A message on this topic causes all alarm devices to sound their buzzers.
+	A message on this topic causes all alarm devices to sound their buzzers.
 
 ## User Guide
 
