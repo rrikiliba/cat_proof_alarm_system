@@ -12,7 +12,6 @@ function onConnect() {
     var message = new Paho.MQTT.Message("webapp");
     message.destinationName = "device/online";
     client.send(message);
-    console.log("Message sent: webapp");
 }
 
 function onConnectionLost(responseObject) {
@@ -20,15 +19,14 @@ function onConnectionLost(responseObject) {
         console.log("Connection lost: " + responseObject.errorMessage);
     }
     updateStatus('brokerStatus', false);
+    updateStatus('alarmStatus', false);
     alert("Connection lost!");
 }
 
 function onMessageArrived(message) {
-    console.log("Message arrived: " + message.payloadString);
     if (message.destinationName === "alarm/disarm") {
         console.log("Alarm state: " + message.payloadString);
         isArmed = false;
-        updateStatus('alarmStatus', false);
         setButtonState();
     }
     else if(message.destinationName === "image/submit") {
@@ -39,29 +37,19 @@ function onMessageArrived(message) {
         onImageRecived();
     }
     else if(message.destinationName === "alarm/rearm") {
-        document.getElementById('setAlarm').disabled = false;
+        document.getElementById('arm').disabled = false;
         isArmed = true;
         setButtonState();
     }
     else if(message.destinationName === "device/ack/webapp") {
         console.log("Device ack: " + message.payloadString);
-        updateStatus('alarmStatus', true);
-        if (message.payloadString === '0') {
-            isArmed = false;
-        } else {
-            isArmed = true;
+        if (message.payloadString === '1') {
+            updateStatus('alarmStatus', true);
+        }else{
+            isAlarmConnected('alarmStatus', false);
+            //alert("Alarm is not connected");
         }
-        setButtonState();
     }
-}
-
-function setButtonState() {
-    if (isArmed) {
-        document.getElementById('arm').textContent = "Disarm";
-    }else {
-        document.getElementById('arm').textContent = "Arm";
-    }
-    console.log("IsArmed: " + isArmed);
 }
 
 function onImageRecived(){
@@ -74,14 +62,6 @@ document.getElementById('brokerForm').addEventListener('submit', function(e) {
     var brokerPassword = document.getElementById('brokerPassword').value;
     try {
         client = new Paho.MQTT.Client(window.location.hostname, Number(9001), "webapp");
-        client.onConnectionLost = function(responseObject) {
-            onConnectionLost(responseObject);
-            console.log("Connection lost: ", responseObject.errorMessage);
-        };
-        client.onMessageArrived = function(message) {
-            onMessageArrived(message);
-            console.log("Message arrived: ", message.payloadString);
-        };
         client.connect({
             onSuccess: function() {
                 onConnect();
@@ -95,6 +75,13 @@ document.getElementById('brokerForm').addEventListener('submit', function(e) {
             password: brokerPassword,
             keepAliveInterval: 300
         });
+        client.onConnectionLost = function(responseObject) {
+            console.log("Connection lost: ", responseObject.errorMessage);
+            onConnectionLost(responseObject);
+        };
+        client.onMessageArrived = function(message) {
+            onMessageArrived(message);
+        };
     } catch (error) {
         console.error("Failed to connect to broker: ", error);
         alert("Failed to connect to broker: " + error.message);
@@ -152,14 +139,13 @@ function updateStatus(elementId, isConnected) {
         element.classList.remove('disconnected');
         element.textContent = `${elementId.replace('Status', ' status')}: Connected`;
         document.getElementById('brokerForm').style.display = 'none';
-        document.getElementById('arm').style.display = 'block';
+        document.getElementById('brokerStatus').style.display = 'none';
         document.getElementById('systemStatus').style.display = 'block';
         passwordMessage.style.display = 'none';
     } else {
         element.classList.add('disconnected');
         element.classList.remove('connected');
         element.textContent = `${elementId.replace('Status', ' status')}: Disconnected`;
-
         document.getElementById('brokerForm').style.display = 'block';
         document.getElementById('arm').style.display = 'none';
         document.getElementById('systemStatus').style.display = 'none';
@@ -168,27 +154,60 @@ function updateStatus(elementId, isConnected) {
     checkSystemStatus();
 }
 
+function isAlarmConnected(elementId, isConnected) {
+    const message = document.querySelector('.instruction');
+    if(elementId === 'alarmStatus' && !isConnected){
+        document.getElementById('brokerForm').style.display = 'none';
+        document.getElementById('brokerStatus').style.display = 'block';
+        document.getElementById('systemStatus').style.display = 'block';
+        document.getElementById('alarmStatus').style.display = 'block';
+        message.textContent = "Wait for the alarm to connect to the broker";
+        message.style.display = 'block';
+    }
+    else{
+        updateStatus(elementId, isConnected);
+    }
+}
+
+function setButtonState() {
+    const arm = document.getElementById('arm');
+    const alarmArmed = document.getElementById('alarmArmed');
+    const message = document.querySelector('.instruction');
+    if (isArmed) {
+        arm.textContent = "Disarm";
+        alarmArmed.textContent = "The alarm is armed";
+        alarmArmed.classList.remove('disconnected');
+        alarmArmed.classList.add('connected');
+        message.style.display = 'none';
+    } else {
+        arm.textContent = "Arm";
+        alarmArmed.textContent = "The alarm is disarmed";
+        alarmArmed.classList.remove('connected');
+        alarmArmed.classList.add('disconnected');
+        message.style.display = 'none';
+        document.getElementById('brokerForm').style.display = 'none';
+        document.getElementById('arm').style.display = 'block';
+    }
+}
+
+
 function checkSystemStatus() {
     const brokerConnected = document.getElementById('brokerStatus').classList.contains('connected');
     const alarmConnected = document.getElementById('alarmStatus').classList.contains('connected');
     const systemStatus = document.getElementById('systemStatus');
     const alarmArmed = document.getElementById('alarmArmed');
+    alarmArmed.textContent = "The alarm is disarmed";
+    alarmArmed.classList.add('status-box', 'disconnected');
 
     if (brokerConnected && alarmConnected) {
         systemStatus.textContent = "The alarm is on";
         systemStatus.classList.add('status-box', 'connected');
         document.getElementById('brokerStatus').style.display = 'none';
         document.getElementById('alarmStatus').style.display = 'none';
+        document.getElementById('arm').style.display = 'block';
     } else {
         systemStatus.textContent = "";
         systemStatus.classList.remove('connected');
     }
-    if(isArmed){
-        alarmArmed.textContent = "The alarm is armed";
-        alarmArmed.classList.add('status-box', 'connected');
-    }
-    else{
-        alarmArmed.textContent = "The alarm is disarmed";
-        alarmArmed.classList.add('status-box', 'disconnected');
-    }
+
 }

@@ -200,3 +200,11 @@ p {
 .connected .instruction {
     display: none;
 }
+
+.disarm {
+    background-color: red;
+}
+
+.armed {
+    background-color: green;
+}
