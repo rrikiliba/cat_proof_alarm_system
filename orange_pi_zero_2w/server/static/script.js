@@ -44,6 +44,7 @@ function onMessageArrived(message) {
         setButtonState();
     }
     else if(message.destinationName === "device/ack/webapp") {
+        console.log("Device ack: " + message.payloadString);
         updateStatus('alarmStatus', true);
         if (message.payloadString === '0') {
             isArmed = false;
@@ -56,9 +57,9 @@ function onMessageArrived(message) {
 
 function setButtonState() {
     if (isArmed) {
-        document.getElementById('setAlarm').textContent = "Disarm";
+        document.getElementById('arm').textContent = "Disarm";
     }else {
-        document.getElementById('setAlarm').textContent = "Arm";
+        document.getElementById('arm').textContent = "Arm";
     }
     console.log("IsArmed: " + isArmed);
 }
@@ -74,9 +75,11 @@ document.getElementById('brokerForm').addEventListener('submit', function(e) {
     try {
         client = new Paho.MQTT.Client(window.location.hostname, Number(9001), "webapp");
         client.onConnectionLost = function(responseObject) {
+            onConnectionLost(responseObject);
             console.log("Connection lost: ", responseObject.errorMessage);
         };
         client.onMessageArrived = function(message) {
+            onMessageArrived(message);
             console.log("Message arrived: ", message.payloadString);
         };
         client.connect({
@@ -85,10 +88,12 @@ document.getElementById('brokerForm').addEventListener('submit', function(e) {
                 console.log("Connected successfully");
             },
             onFailure: function (error) {
+                alert("Connection failed: " + error.errorMessage);
                 console.log("Connection failed: ", error.errorMessage);
             },
             userName: "admin",
-            password: brokerPassword
+            password: brokerPassword,
+            keepAliveInterval: 300
         });
     } catch (error) {
         console.error("Failed to connect to broker: ", error);
