@@ -24,25 +24,16 @@ class Alarm:
         self.connect_to_wifi()
         self.connect_to_mqtt()
                 
-        # subscribe to relevant topics
-        self.mqtt.subscribe('device/ack/'+cfg.DEVICE_ID)
-        self.mqtt.subscribe('alarm/disarm')
-        self.mqtt.subscribe('alarm/rearm')
-        self.mqtt.subscribe('alarm/rearm/'+cfg.DEVICE_ID)
-        self.mqtt.subscribe('alarm/sound')
-
-        self.mqtt.publish('device/online', cfg.DEVICE_ID)
-        self.mqtt.set_last_will('device/offline', cfg.DEVICE_ID)
-        print('MQTT OK')
-
     # connect to wifi
     def connect_to_wifi(self):
         self.wlan = network.WLAN()
         self.wlan.active(True)
         while not self.wlan.isconnected():
             print('WIFI CONNECTING')
-            self.wlan.connect(cfg.WIFI_SSID, cfg.WIFI_PASSWORD)
-            utime.sleep_ms(1000)
+            try:
+                self.wlan.connect(cfg.WIFI_SSID, cfg.WIFI_PASSWORD)
+            except:
+                utime.sleep_ms(1000)
         print('WIFI OK')
 
     # connect to mqtt
@@ -54,14 +45,23 @@ class Alarm:
                     port=cfg.MQTT_PORT,
                     user=cfg.MQTT_USER,
                     password=cfg.MQTT_PASSWORD,
-                    keepalive=60,
+                    keepalive=120,
                     #ssl=cfg.MQTT_SSL,
                     #ssl_params=cfg.MQTT_SSL_PARAMS
                     )
                 self.mqtt.set_callback(self.recv_msg)
+                self.mqtt.set_last_will('device/offline', cfg.DEVICE_ID)
+        
                 self.mqtt.connect()
+        
                 # subscribe to relevant topics
-                self.mqtt.subscribe('image/request')
+                self.mqtt.subscribe('device/ack/'+cfg.DEVICE_ID)
+                self.mqtt.subscribe('alarm/disarm')
+                self.mqtt.subscribe('alarm/rearm')
+                self.mqtt.subscribe('alarm/rearm/'+cfg.DEVICE_ID)
+                self.mqtt.subscribe('alarm/sound')
+
+                self.mqtt.publish('device/online', cfg.DEVICE_ID)
                 print('MQTT OK')
                 return
             except OSError as e:
@@ -70,13 +70,13 @@ class Alarm:
 
     # defines the interrupt for the motion sensor and arms the alarm
     def rearm(self):
-        self.peripherals['MOTION'].irq(trigger=Pin.IRQ_RISING, handler=self.motion_triggered)
-        self.armed = True
         self.peripherals['LED'].value(1)
         print('ARMED')
         self.peripherals['BUZZER'].value(1)
         utime.sleep_ms(600)
         self.peripherals['BUZZER'].value(0)
+        self.armed = True
+        self.peripherals['MOTION'].irq(trigger=Pin.IRQ_RISING, handler=self.motion_triggered)
 
     # clears the interrupt for the motion sensor and disarms the alarm
     def disarm(self):
@@ -100,12 +100,16 @@ class Alarm:
                 utime.sleep_ms(1000)
                 self.peripherals['BUZZER'].value(0)
                 utime.sleep_ms(500)
+                try:
+                    alarm.mqtt.check_msg()
+                except:
+                    pass
             self.disarm()
 
     # starts polling the RFID reader
     def poll_card(self):
         while self.armed:
-
+            
             # we use a *very* small subset of functionalities from the RFID sensor driver
             self.peripherals['RFID'].init()
             (status, _) = self.peripherals['RFID'].request(self.peripherals['RFID'].REQIDL)
@@ -135,8 +139,13 @@ class Alarm:
                             utime.sleep_ms(200)
                             self.peripherals['BUZZER'].value(0)
                             utime.sleep_ms(200)
-            self.mqtt.check_msg()
-            utime.sleep_ms(100)
+            try:
+                self.mqtt.check_msg()
+                utime.sleep_ms(100)
+            except:
+                print('CONN LOST')
+                alarm.connect_to_wifi()
+                alarm.connect_to_mqtt()
 
     # callback for the interrupt
     def motion_triggered(self, _):
@@ -147,7 +156,7 @@ class Alarm:
 
     # callback for the mqtt client
     def recv_msg(self, topic, msg):
-        print('MSG ON '+topic.decode('ASCII'))
+        # print('MSG ON '+topic.decode('ASCII'))
         ack_topic = 'device/ack/'+cfg.DEVICE_ID
         rearm_topic = 'alarm/rearm/'+cfg.DEVICE_ID
         if topic == ack_topic.encode('ASCII') or topic == ack_topic.encode('utf-8'):
