@@ -68,18 +68,21 @@ class Controller:
 
     # detects a cat in the image with the given file path
     # will return True if the confidence of cat or dog detection
-    # is above a certain treshold (75%)
+    # is above a certain treshold (configured in .env)
     def detect_cat(self, file_path: str) -> bool:
-        result = self.yolo.predict(file_path)[0]
+        result = self.yolo.predict(file_path, verbose=False)[0]
 
         for box in result.boxes:
             confidence = round(box.conf[0].item(), 3)
             obj = result.names[box.cls[0].item()]
-            # if obj == 'person' and confidence > 0.75:
+
+            self.log( f'{obj} detected with {round(confidence, 3)*100}% confidence', start='+')
+
+            # if obj == 'person' and confidence > float(env('YOLO_TRESHOLD')):
             #     self.mqtt.publish('alarm/sound', payload=None, qos=1)
             #     return False
-            if obj == 'cat' or obj == 'dog' and confidence > 0.75:
-                self.log(f'{obj} detected at {confidence*100}%, defused')
+            if (obj == 'cat' or obj == 'dog') and confidence > float(env('YOLO_THRESHOLD')):
+                self.log(f'{obj} detected, defused')
                 return True
     
         self.log('No cat or dog detected', start='!')
