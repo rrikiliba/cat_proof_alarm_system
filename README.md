@@ -12,7 +12,7 @@ The goal is to develop a system that enables users to utilize a motion-based ala
 * Raspberry Pi Pico W
 	* RC522 RFID reader
 	* IR movement sensor
-* ESP32
+* ESP32-CAM
 	* OV2640 CAM
 	* USB programming module
 * Orange Pi Zero 2W (optional)
@@ -77,7 +77,7 @@ These files can be found at the following paths:
 1. raspberry_pi_pico_w/lib/secrets.py
 2. esp32/lib/secrets.py
 3. orange_pi_zero_2w/.env
-4. orange_pi_zero_2w/.authfile
+4. orange_pi_zero_2w/controller/.authfile
 5. orange_pi_zero_2w/mosquitto/passwd
 
 For 1-3, the necessary variables, their meaning and use can be all found in the generated files themselves. 
