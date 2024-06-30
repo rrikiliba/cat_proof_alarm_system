@@ -184,8 +184,8 @@ Then, to use the alarm, the user needs to connect to the webapp and authenticate
 
 ## Links
 
-1. [Canvas presentation]()
-1. [Video presentation]()
+1. [Canvas presentation](https://www.canva.com/design/DAGH7dGO_NY/p0_mcGjFGFjaGZPMHdD8_Q/edit?utm_content=DAGH7dGO_NY&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
+1. [Video presentation](https://www.canva.com/design/DAGJmqny_yo/pX8_wBdEKOlyi6BuhTDhsw/edit?utm_content=DAGJmqny_yo&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
 ## Team Members' Contributions
 
@@ -196,6 +196,7 @@ Riccardo Libanora:
 - Orange pi zero 2w code development
 - Mqtt broker and topics, network setup
 - "Getting started" section of documentation
+- Video presentation
 
 Davide Zanolini: 
 
